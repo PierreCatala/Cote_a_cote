@@ -1,0 +1,1138 @@
+[
+  {
+    "code_insee": "11145",
+    "nom": "Fleury",
+    "erosion_rate": 0.03,
+    "price_delta_pct": 18.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3526
+  },
+  {
+    "code_insee": "13028",
+    "nom": "La Ciotat",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 8.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 5469
+  },
+  {
+    "code_insee": "14565",
+    "nom": "Saint-Côme-de-Fresné",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 29.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3145
+  },
+  {
+    "code_insee": "17010",
+    "nom": "Angoulins",
+    "erosion_rate": 0.18,
+    "price_delta_pct": -2.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 4109
+  },
+  {
+    "code_insee": "17028",
+    "nom": "Aytré",
+    "erosion_rate": 0.37,
+    "price_delta_pct": -4.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3973
+  },
+  {
+    "code_insee": "17093",
+    "nom": "Le Château-d'Oléron",
+    "erosion_rate": 0.14,
+    "price_delta_pct": -3.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 3334
+  },
+  {
+    "code_insee": "17168",
+    "nom": "Fouras",
+    "erosion_rate": 0.01,
+    "price_delta_pct": 9.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 4010
+  },
+  {
+    "code_insee": "17300",
+    "nom": "La Rochelle",
+    "erosion_rate": 0.09,
+    "price_delta_pct": -3.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 4853
+  },
+  {
+    "code_insee": "17329",
+    "nom": "Saint-Froult",
+    "erosion_rate": 0.38,
+    "price_delta_pct": 13.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2085
+  },
+  {
+    "code_insee": "17337",
+    "nom": "Saint-Georges-d'Oléron",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 5.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 3882
+  },
+  {
+    "code_insee": "17380",
+    "nom": "Saint-Palais-sur-Mer",
+    "erosion_rate": 0.67,
+    "price_delta_pct": 15.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 4712
+  },
+  {
+    "code_insee": "17411",
+    "nom": "Saint-Trojan-les-Bains",
+    "erosion_rate": 1.14,
+    "price_delta_pct": -6.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 4106
+  },
+  {
+    "code_insee": "17452",
+    "nom": "La Tremblade",
+    "erosion_rate": 0.09,
+    "price_delta_pct": -4.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 3452
+  },
+  {
+    "code_insee": "17483",
+    "nom": "Yves",
+    "erosion_rate": 0.18,
+    "price_delta_pct": -11.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3211
+  },
+  {
+    "code_insee": "17485",
+    "nom": "Le Grand-Village-Plage",
+    "erosion_rate": 0.63,
+    "price_delta_pct": -4,
+    "erosion_class": "moyen",
+    "price_median_m2": 4176
+  },
+  {
+    "code_insee": "22016",
+    "nom": "Île-de-Bréhat",
+    "erosion_rate": 0.16,
+    "price_delta_pct": 1.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 7136
+  },
+  {
+    "code_insee": "22054",
+    "nom": "Erquy",
+    "erosion_rate": 0.04,
+    "price_delta_pct": -9,
+    "erosion_class": "moyen",
+    "price_median_m2": 3680
+  },
+  {
+    "code_insee": "22085",
+    "nom": "Kerbors",
+    "erosion_rate": 0.12,
+    "price_delta_pct": 9.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2250
+  },
+  {
+    "code_insee": "22134",
+    "nom": "Louannec",
+    "erosion_rate": 0.29,
+    "price_delta_pct": 7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2925
+  },
+  {
+    "code_insee": "22166",
+    "nom": "Penvénan",
+    "erosion_rate": 0.16,
+    "price_delta_pct": 1.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 3058
+  },
+  {
+    "code_insee": "22195",
+    "nom": "Pleubian",
+    "erosion_rate": 0.01,
+    "price_delta_pct": 15.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2300
+  },
+  {
+    "code_insee": "22218",
+    "nom": "Plougrescant",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 37.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 2958
+  },
+  {
+    "code_insee": "22343",
+    "nom": "Trébeurden",
+    "erosion_rate": 0.12,
+    "price_delta_pct": 16.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3095
+  },
+  {
+    "code_insee": "22349",
+    "nom": "Trédrez-Locquémeau",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 37.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2847
+  },
+  {
+    "code_insee": "22353",
+    "nom": "Trégastel",
+    "erosion_rate": 0.13,
+    "price_delta_pct": -6,
+    "erosion_class": "moyen",
+    "price_median_m2": 3475
+  },
+  {
+    "code_insee": "22363",
+    "nom": "Trélévern",
+    "erosion_rate": 0.05,
+    "price_delta_pct": -5.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 2886
+  },
+  {
+    "code_insee": "22379",
+    "nom": "Trévou-Tréguignec",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 21.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3113
+  },
+  {
+    "code_insee": "29037",
+    "nom": "Combrit",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 21.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3078
+  },
+  {
+    "code_insee": "29039",
+    "nom": "Concarneau",
+    "erosion_rate": 0.04,
+    "price_delta_pct": 4.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 3223
+  },
+  {
+    "code_insee": "29040",
+    "nom": "Le Conquet",
+    "erosion_rate": 0.1,
+    "price_delta_pct": 11.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 3249
+  },
+  {
+    "code_insee": "29046",
+    "nom": "Douarnenez",
+    "erosion_rate": 0.08,
+    "price_delta_pct": 2.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2341
+  },
+  {
+    "code_insee": "29072",
+    "nom": "Guilvinec",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 12.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2520
+  },
+  {
+    "code_insee": "29077",
+    "nom": "Guissény",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 29,
+    "erosion_class": "moyen",
+    "price_median_m2": 2104
+  },
+  {
+    "code_insee": "29091",
+    "nom": "Kerlouan",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 11.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2224
+  },
+  {
+    "code_insee": "29098",
+    "nom": "Lampaul-Plouarzel",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 36.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 2562
+  },
+  {
+    "code_insee": "29099",
+    "nom": "Lampaul-Ploudalmézeau",
+    "erosion_rate": 0.58,
+    "price_delta_pct": 19.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2098
+  },
+  {
+    "code_insee": "29101",
+    "nom": "Landéda",
+    "erosion_rate": 0.02,
+    "price_delta_pct": 18.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2623
+  },
+  {
+    "code_insee": "29109",
+    "nom": "Landunvez",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 36.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3241
+  },
+  {
+    "code_insee": "29112",
+    "nom": "Lanildut",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 0.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2816
+  },
+  {
+    "code_insee": "29135",
+    "nom": "Loctudy",
+    "erosion_rate": 0.32,
+    "price_delta_pct": 17.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 3020
+  },
+  {
+    "code_insee": "29158",
+    "nom": "Penmarch",
+    "erosion_rate": 0.14,
+    "price_delta_pct": 0.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 2793
+  },
+  {
+    "code_insee": "29165",
+    "nom": "Plobannalec-Lesconil",
+    "erosion_rate": 0.01,
+    "price_delta_pct": 10.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2512
+  },
+  {
+    "code_insee": "29171",
+    "nom": "Plomeur",
+    "erosion_rate": 0.65,
+    "price_delta_pct": 1.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2328
+  },
+  {
+    "code_insee": "29177",
+    "nom": "Plouarzel",
+    "erosion_rate": 0.03,
+    "price_delta_pct": 8.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2490
+  },
+  {
+    "code_insee": "29178",
+    "nom": "Ploudalmézeau",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 5.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2466
+  },
+  {
+    "code_insee": "29188",
+    "nom": "Plougasnou",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 14.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2422
+  },
+  {
+    "code_insee": "29195",
+    "nom": "Plouguerneau",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 2.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2444
+  },
+  {
+    "code_insee": "29201",
+    "nom": "Ploumoguer",
+    "erosion_rate": 0.18,
+    "price_delta_pct": 15.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2265
+  },
+  {
+    "code_insee": "29214",
+    "nom": "Plovan",
+    "erosion_rate": 0.75,
+    "price_delta_pct": 3.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2451
+  },
+  {
+    "code_insee": "29215",
+    "nom": "Plozévet",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 11.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2294
+  },
+  {
+    "code_insee": "29221",
+    "nom": "Porspoder",
+    "erosion_rate": 0.18,
+    "price_delta_pct": 9.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 2809
+  },
+  {
+    "code_insee": "29239",
+    "nom": "Roscoff",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 7.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3210
+  },
+  {
+    "code_insee": "29252",
+    "nom": "Saint-Jean-Trolimon",
+    "erosion_rate": 1.08,
+    "price_delta_pct": -8.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2528
+  },
+  {
+    "code_insee": "29257",
+    "nom": "Saint-Pabu",
+    "erosion_rate": 0.19,
+    "price_delta_pct": 20.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 2528
+  },
+  {
+    "code_insee": "29259",
+    "nom": "Saint-Pol-de-Léon",
+    "erosion_rate": 0.07,
+    "price_delta_pct": -8.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 2151
+  },
+  {
+    "code_insee": "29284",
+    "nom": "Treffiagat",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 1.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 2482
+  },
+  {
+    "code_insee": "29287",
+    "nom": "Tréflez",
+    "erosion_rate": 0.15,
+    "price_delta_pct": 3.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 1847
+  },
+  {
+    "code_insee": "29292",
+    "nom": "Tréguennec",
+    "erosion_rate": 0.74,
+    "price_delta_pct": 154.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 3182
+  },
+  {
+    "code_insee": "33097",
+    "nom": "Carcans",
+    "erosion_rate": 1.29,
+    "price_delta_pct": 17.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 3918
+  },
+  {
+    "code_insee": "33214",
+    "nom": "Lacanau",
+    "erosion_rate": 0.66,
+    "price_delta_pct": 16.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 5329
+  },
+  {
+    "code_insee": "33236",
+    "nom": "Lège-Cap-Ferret",
+    "erosion_rate": 0.45,
+    "price_delta_pct": 14.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 11321
+  },
+  {
+    "code_insee": "33514",
+    "nom": "Soulac-sur-Mer",
+    "erosion_rate": 2.44,
+    "price_delta_pct": 19.5,
+    "erosion_class": "fort",
+    "price_median_m2": 3825
+  },
+  {
+    "code_insee": "33529",
+    "nom": "La Teste-de-Buch",
+    "erosion_rate": 2.14,
+    "price_delta_pct": 13,
+    "erosion_class": "fort",
+    "price_median_m2": 5554
+  },
+  {
+    "code_insee": "33540",
+    "nom": "Vendays-Montalivet",
+    "erosion_rate": 0.88,
+    "price_delta_pct": 2.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 3300
+  },
+  {
+    "code_insee": "34108",
+    "nom": "Frontignan",
+    "erosion_rate": 0.53,
+    "price_delta_pct": 2.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3486
+  },
+  {
+    "code_insee": "34154",
+    "nom": "Mauguio",
+    "erosion_rate": 0.36,
+    "price_delta_pct": 4,
+    "erosion_class": "moyen",
+    "price_median_m2": 4533
+  },
+  {
+    "code_insee": "34301",
+    "nom": "Sète",
+    "erosion_rate": 0.28,
+    "price_delta_pct": 8,
+    "erosion_class": "moyen",
+    "price_median_m2": 3611
+  },
+  {
+    "code_insee": "34332",
+    "nom": "Vias",
+    "erosion_rate": 0.51,
+    "price_delta_pct": -2.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3135
+  },
+  {
+    "code_insee": "34337",
+    "nom": "Villeneuve-lès-Maguelone",
+    "erosion_rate": 0.4,
+    "price_delta_pct": 9.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3880
+  },
+  {
+    "code_insee": "35049",
+    "nom": "Cancale",
+    "erosion_rate": 0.53,
+    "price_delta_pct": 11.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 4157
+  },
+  {
+    "code_insee": "35256",
+    "nom": "Saint-Briac-sur-Mer",
+    "erosion_rate": 0.04,
+    "price_delta_pct": 16.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 6421
+  },
+  {
+    "code_insee": "35288",
+    "nom": "Saint-Malo",
+    "erosion_rate": 0.01,
+    "price_delta_pct": -3.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 4603
+  },
+  {
+    "code_insee": "40065",
+    "nom": "Capbreton",
+    "erosion_rate": 1.73,
+    "price_delta_pct": 8.8,
+    "erosion_class": "fort",
+    "price_median_m2": 6636
+  },
+  {
+    "code_insee": "40296",
+    "nom": "Seignosse",
+    "erosion_rate": 0.03,
+    "price_delta_pct": 8.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 6218
+  },
+  {
+    "code_insee": "40304",
+    "nom": "Soorts-Hossegor",
+    "erosion_rate": 0.15,
+    "price_delta_pct": 16.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 9203
+  },
+  {
+    "code_insee": "44055",
+    "nom": "La Baule-Escoublac",
+    "erosion_rate": 0.3,
+    "price_delta_pct": 5.8,
+    "erosion_class": "fort",
+    "price_median_m2": 6252
+  },
+  {
+    "code_insee": "50041",
+    "nom": "La Hague",
+    "erosion_rate": 0.19,
+    "price_delta_pct": 6.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2253
+  },
+  {
+    "code_insee": "50058",
+    "nom": "Blainville-sur-Mer",
+    "erosion_rate": 0.12,
+    "price_delta_pct": -5.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 3010
+  },
+  {
+    "code_insee": "50076",
+    "nom": "Bréhal",
+    "erosion_rate": 0.23,
+    "price_delta_pct": 27.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 2838
+  },
+  {
+    "code_insee": "50077",
+    "nom": "Bretteville",
+    "erosion_rate": 0.08,
+    "price_delta_pct": 24.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 2690
+  },
+  {
+    "code_insee": "50081",
+    "nom": "Bréville-sur-Mer",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 13.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3103
+  },
+  {
+    "code_insee": "50129",
+    "nom": "Cherbourg-en-Cotentin",
+    "erosion_rate": 0.08,
+    "price_delta_pct": 2.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2385
+  },
+  {
+    "code_insee": "50142",
+    "nom": "Vicq-sur-Mer",
+    "erosion_rate": 0.23,
+    "price_delta_pct": 20.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2267
+  },
+  {
+    "code_insee": "50143",
+    "nom": "Coudeville-sur-Mer",
+    "erosion_rate": 0.24,
+    "price_delta_pct": 19.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2155
+  },
+  {
+    "code_insee": "50165",
+    "nom": "Donville-les-Bains",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 4.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 3469
+  },
+  {
+    "code_insee": "50167",
+    "nom": "Dragey-Ronthon",
+    "erosion_rate": 0.76,
+    "price_delta_pct": 19.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 2260
+  },
+  {
+    "code_insee": "50178",
+    "nom": "Fermanville",
+    "erosion_rate": 0.11,
+    "price_delta_pct": 14.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2437
+  },
+  {
+    "code_insee": "50199",
+    "nom": "Genêts",
+    "erosion_rate": 0.02,
+    "price_delta_pct": 49.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2308
+  },
+  {
+    "code_insee": "50238",
+    "nom": "Héauville",
+    "erosion_rate": 0.13,
+    "price_delta_pct": 4.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 1844
+  },
+  {
+    "code_insee": "50272",
+    "nom": "Tourneville-sur-Mer",
+    "erosion_rate": 0.46,
+    "price_delta_pct": -9.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2059
+  },
+  {
+    "code_insee": "50296",
+    "nom": "Maupertus-sur-Mer",
+    "erosion_rate": 0.04,
+    "price_delta_pct": -32.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 3704
+  },
+  {
+    "code_insee": "50332",
+    "nom": "Les Moitiers-d'Allonne",
+    "erosion_rate": 0.32,
+    "price_delta_pct": 21.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2559
+  },
+  {
+    "code_insee": "50349",
+    "nom": "Montmartin-sur-Mer",
+    "erosion_rate": 1.77,
+    "price_delta_pct": 16.5,
+    "erosion_class": "fort",
+    "price_median_m2": 2531
+  },
+  {
+    "code_insee": "50402",
+    "nom": "Les Pieux",
+    "erosion_rate": 0.24,
+    "price_delta_pct": 14.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2247
+  },
+  {
+    "code_insee": "50412",
+    "nom": "Port-Bail-sur-Mer",
+    "erosion_rate": 0.44,
+    "price_delta_pct": 8.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2523
+  },
+  {
+    "code_insee": "50433",
+    "nom": "Réville",
+    "erosion_rate": 0.05,
+    "price_delta_pct": 15,
+    "erosion_class": "moyen",
+    "price_median_m2": 2604
+  },
+  {
+    "code_insee": "50442",
+    "nom": "Le Rozel",
+    "erosion_rate": 0.12,
+    "price_delta_pct": -66.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 2622
+  },
+  {
+    "code_insee": "50471",
+    "nom": "Saint-Georges-de-la-Rivière",
+    "erosion_rate": 0.13,
+    "price_delta_pct": 10.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 2367
+  },
+  {
+    "code_insee": "50585",
+    "nom": "Surtainville",
+    "erosion_rate": 0.76,
+    "price_delta_pct": -12.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2375
+  },
+  {
+    "code_insee": "56088",
+    "nom": "Île-d'Arz",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 26.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 5346
+  },
+  {
+    "code_insee": "56186",
+    "nom": "Quiberon",
+    "erosion_rate": 0.08,
+    "price_delta_pct": 14.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 5299
+  },
+  {
+    "code_insee": "56240",
+    "nom": "Sarzeau",
+    "erosion_rate": 0.07,
+    "price_delta_pct": 2.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 4372
+  },
+  {
+    "code_insee": "62054",
+    "nom": "Audinghen",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 11.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 3527
+  },
+  {
+    "code_insee": "64024",
+    "nom": "Anglet",
+    "erosion_rate": 0.02,
+    "price_delta_pct": 3.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 5733
+  },
+  {
+    "code_insee": "64122",
+    "nom": "Biarritz",
+    "erosion_rate": 0.14,
+    "price_delta_pct": 1.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 7599
+  },
+  {
+    "code_insee": "64125",
+    "nom": "Bidart",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 6.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 6594
+  },
+  {
+    "code_insee": "64189",
+    "nom": "Ciboure",
+    "erosion_rate": 0.02,
+    "price_delta_pct": 0.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 6155
+  },
+  {
+    "code_insee": "64249",
+    "nom": "Guéthary",
+    "erosion_rate": 0.17,
+    "price_delta_pct": 9.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 8632
+  },
+  {
+    "code_insee": "64483",
+    "nom": "Saint-Jean-de-Luz",
+    "erosion_rate": 0.09,
+    "price_delta_pct": -4.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 6338
+  },
+  {
+    "code_insee": "66053",
+    "nom": "Collioure",
+    "erosion_rate": 0.13,
+    "price_delta_pct": 3.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 4966
+  },
+  {
+    "code_insee": "66212",
+    "nom": "Torreilles",
+    "erosion_rate": 0.13,
+    "price_delta_pct": 13.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2860
+  },
+  {
+    "code_insee": "76192",
+    "nom": "Criel-sur-Mer",
+    "erosion_rate": 0.16,
+    "price_delta_pct": 11.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 2391
+  },
+  {
+    "code_insee": "76217",
+    "nom": "Dieppe",
+    "erosion_rate": 0.14,
+    "price_delta_pct": 4.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 2401
+  },
+  {
+    "code_insee": "76515",
+    "nom": "Quiberville-sur-Mer",
+    "erosion_rate": 0.35,
+    "price_delta_pct": -11,
+    "erosion_class": "moyen",
+    "price_median_m2": 2634
+  },
+  {
+    "code_insee": "76605",
+    "nom": "Sainte-Marguerite-sur-Mer",
+    "erosion_rate": 0.45,
+    "price_delta_pct": -9.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2901
+  },
+  {
+    "code_insee": "80039",
+    "nom": "Ault",
+    "erosion_rate": 0.2,
+    "price_delta_pct": 14.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 2424
+  },
+  {
+    "code_insee": "80533",
+    "nom": "Mers-les-Bains",
+    "erosion_rate": 0.19,
+    "price_delta_pct": 10.9,
+    "erosion_class": "moyen",
+    "price_median_m2": 2309
+  },
+  {
+    "code_insee": "83019",
+    "nom": "Bormes-les-Mimosas",
+    "erosion_rate": 0.11,
+    "price_delta_pct": 10.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 5796
+  },
+  {
+    "code_insee": "83036",
+    "nom": "Cavalaire-sur-Mer",
+    "erosion_rate": 0.29,
+    "price_delta_pct": 7.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 5823
+  },
+  {
+    "code_insee": "83048",
+    "nom": "La Croix-Valmer",
+    "erosion_rate": 0.18,
+    "price_delta_pct": 22.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 8419
+  },
+  {
+    "code_insee": "83065",
+    "nom": "Gassin",
+    "erosion_rate": 0.02,
+    "price_delta_pct": 17.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 10631
+  },
+  {
+    "code_insee": "83068",
+    "nom": "Grimaud",
+    "erosion_rate": 0.68,
+    "price_delta_pct": 9.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 7213
+  },
+  {
+    "code_insee": "83070",
+    "nom": "Le Lavandou",
+    "erosion_rate": 0.18,
+    "price_delta_pct": 11.8,
+    "erosion_class": "moyen",
+    "price_median_m2": 6483
+  },
+  {
+    "code_insee": "83071",
+    "nom": "La Londe-les-Maures",
+    "erosion_rate": 0.14,
+    "price_delta_pct": 4.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 5688
+  },
+  {
+    "code_insee": "83101",
+    "nom": "Ramatuelle",
+    "erosion_rate": 0.14,
+    "price_delta_pct": -2.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 15872
+  },
+  {
+    "code_insee": "83115",
+    "nom": "Sainte-Maxime",
+    "erosion_rate": 0.18,
+    "price_delta_pct": 5.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 6318
+  },
+  {
+    "code_insee": "83119",
+    "nom": "Saint-Tropez",
+    "erosion_rate": 0.24,
+    "price_delta_pct": 3.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 13135
+  },
+  {
+    "code_insee": "83152",
+    "nom": "Rayol-Canadel-sur-Mer",
+    "erosion_rate": 0.19,
+    "price_delta_pct": 19.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 9155
+  },
+  {
+    "code_insee": "85114",
+    "nom": "Jard-sur-Mer",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 5.3,
+    "erosion_class": "moyen",
+    "price_median_m2": 3709
+  },
+  {
+    "code_insee": "85127",
+    "nom": "Longeville-sur-Mer",
+    "erosion_rate": 0.2,
+    "price_delta_pct": 10.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 3167
+  },
+  {
+    "code_insee": "85278",
+    "nom": "Saint-Vincent-sur-Jard",
+    "erosion_rate": 0.05,
+    "price_delta_pct": -11.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 3398
+  },
+  {
+    "code_insee": "85288",
+    "nom": "Talmont-Saint-Hilaire",
+    "erosion_rate": 0.06,
+    "price_delta_pct": -4.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3371
+  },
+  {
+    "code_insee": "85294",
+    "nom": "La Tranche-sur-Mer",
+    "erosion_rate": 0.11,
+    "price_delta_pct": 15.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 3962
+  },
+  {
+    "code_insee": "06004",
+    "nom": "Antibes",
+    "erosion_rate": 0.2,
+    "price_delta_pct": 6.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 5243
+  },
+  {
+    "code_insee": "06059",
+    "nom": "Èze",
+    "erosion_rate": 0.15,
+    "price_delta_pct": 13.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 10283
+  },
+  {
+    "code_insee": "2B009",
+    "nom": "Aléria",
+    "erosion_rate": 0.04,
+    "price_delta_pct": -18.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 2639
+  },
+  {
+    "code_insee": "2B037",
+    "nom": "Biguglia",
+    "erosion_rate": 0.17,
+    "price_delta_pct": 9.1,
+    "erosion_class": "moyen",
+    "price_median_m2": 3133
+  },
+  {
+    "code_insee": "2B042",
+    "nom": "Borgo",
+    "erosion_rate": 0.08,
+    "price_delta_pct": 14.4,
+    "erosion_class": "moyen",
+    "price_median_m2": 3368
+  },
+  {
+    "code_insee": "2B087",
+    "nom": "Cervione",
+    "erosion_rate": 0.09,
+    "price_delta_pct": 10.6,
+    "erosion_class": "moyen",
+    "price_median_m2": 2686
+  },
+  {
+    "code_insee": "2B148",
+    "nom": "Lucciana",
+    "erosion_rate": 0.47,
+    "price_delta_pct": 11.2,
+    "erosion_class": "moyen",
+    "price_median_m2": 3121
+  },
+  {
+    "code_insee": "2B307",
+    "nom": "Santa-Lucia-di-Moriani",
+    "erosion_rate": 0.06,
+    "price_delta_pct": 1.7,
+    "erosion_class": "moyen",
+    "price_median_m2": 2929
+  },
+  {
+    "code_insee": "2B311",
+    "nom": "Santa-Maria-Poggio",
+    "erosion_rate": 0.95,
+    "price_delta_pct": 19.5,
+    "erosion_class": "moyen",
+    "price_median_m2": 3429
+  }
+]

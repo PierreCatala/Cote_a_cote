@@ -1,0 +1,14 @@
+# Dépendances Node
+pipeline/node_modules/
+
+# Fichiers générés / téléchargeables — à reconstruire via le pipeline
+pipeline/erosion.zip
+pipeline/erosion_shp/
+
+# Fichier non-décret généré en cours de pipeline (lourd, peut être régénéré)
+data/communes_nodecret.geojson
+
+# Divers
+.DS_Store
+Thumbs.db
+*.log

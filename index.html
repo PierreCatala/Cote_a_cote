@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Après moi le déluge — Érosion côtière et prix immobiliers</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header id="app-header">
+    <div class="logo">
+      <span class="logo-icon">🌊</span>
+      <div class="logo-words">
+        <span class="logo-text">Après moi le déluge</span>
+        <span class="logo-sub">Le recul du trait de côte impacte-t-il le prix de l'immobilier dans votre commune&nbsp;?</span>
+      </div>
+    </div>
+
+    <nav class="view-toggle" role="tablist" aria-label="Vue">
+      <button id="btn-map"     class="tab-btn active" role="tab" aria-selected="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        Carte
+      </button>
+      <button id="btn-scatter" class="tab-btn" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="12" r="1.5"/><circle cx="12" cy="7" r="1.5"/><circle cx="17" cy="16" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="15" cy="4" r="1.5"/></svg>
+        Signal de marché
+      </button>
+      <button id="btn-compare" class="tab-btn" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>
+        Comparer
+      </button>
+      <button id="btn-about" class="tab-btn" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Sources
+      </button>
+    </nav>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search-input" type="text" placeholder="Chercher une commune…" autocomplete="off" spellcheck="false">
+      </div>
+      <ul id="search-results" class="search-dropdown hidden" role="listbox"></ul>
+    </div>
+  </header>
+
+  <main id="app-main">
+
+    <!-- ── VUE CARTE ─────────────────────────────────────────── -->
+    <section id="view-map" class="view active">
+      <div id="map"></div>
+
+      <aside id="sidebar" class="hidden" aria-label="Détail commune">
+        <button id="sidebar-close" aria-label="Fermer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        <div class="sidebar-commune">
+          <h2 id="sb-name"></h2>
+          <div class="badges">
+            <span id="sb-erosion-badge" class="badge hidden"></span>
+            <span id="sb-dept" class="badge badge-neutral"></span>
+          </div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <span class="kpi-label">Recul côtier</span>
+            <span id="sb-rate" class="kpi-value"></span><span id="sb-rate-nd" class="nd-info" data-tooltip="La commune est classée en zone d'exposition à l'érosion par le décret, mais les mesures terrain du Cerema (GéoLittoral 2018) ne couvrent pas ce secteur ou ne fournissent pas de taux précis en m/an pour ce linéaire côtier." hidden>?</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Prix médian</span>
+            <span id="sb-price" class="kpi-value"></span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Variation post-2023</span>
+            <span id="sb-delta" class="kpi-value"></span>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-title">
+            <span>Prix au m² par semestre</span>
+            <span class="chart-law-label">◀&nbsp;avant jan.&nbsp;2023&nbsp;·&nbsp;après&nbsp;▶</span>
+          </div>
+          <canvas id="price-chart" height="160"></canvas>
+        </div>
+
+        <button id="compare-add-btn" class="btn-outline">Ajouter à la comparaison</button>
+      </aside>
+
+      <div id="map-legend">
+        <div class="legend-block">
+          <p class="legend-mode-group-label">Variation autour du décret</p>
+          <div class="legend-mode-row">
+            <button class="legend-mode-btn" data-mode="delta1y">1 an avant·après</button>
+            <button class="legend-mode-btn active" data-mode="delta2y">2 ans avant·après</button>
+          </div>
+          <div class="legend-mode-divider"></div>
+          <div class="legend-mode-row">
+            <button class="legend-mode-btn" data-mode="price">Prix médian au m²</button>
+          </div>
+          <p class="legend-title" id="legend-price-title">Prix médian au m² <span class="legend-unit">€/m²</span></p>
+          <div class="legend-year-range" id="legend-year-range">
+            <span class="legend-range-label">Période</span>
+            <select id="year-from" class="legend-select"></select>
+            <span class="legend-range-sep">→</span>
+            <select id="year-to" class="legend-select"></select>
+          </div>
+          <div class="legend-gradient-wrap">
+            <div class="legend-gradient" id="legend-gradient"></div>
+            <div class="legend-ticks" id="legend-ticks"></div>
+          </div>
+          <div class="legend-labels" id="legend-labels"></div>
+        </div>
+        <div class="legend-block">
+          <p class="legend-title">Autres communes côtières</p>
+          <label class="switch-row">
+            <span class="switch-label">Communes sans décret</span>
+            <span class="switch">
+              <input type="checkbox" id="toggle-nodecret" checked>
+              <span class="switch-slider"></span>
+            </span>
+          </label>
+          <span class="nc-badge">Contour gris · prix absolus uniquement</span>
+        </div>
+        <div class="legend-block">
+          <p class="legend-title">Décrets obligation d'information</p>
+          <label class="switch-row">
+            <span class="switch-label">Afficher les contours</span>
+            <span class="switch">
+              <input type="checkbox" id="toggle-erosion" checked>
+              <span class="switch-slider"></span>
+            </span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-label">Flèches de recul du trait de côte</span>
+            <span class="switch">
+              <input type="checkbox" id="toggle-arrows" checked>
+              <span class="switch-slider"></span>
+            </span>
+          </label>
+          <div class="arrow-size-row">
+            <span class="arrow-size-label">Taille</span>
+            <input type="range" id="slider-arrows" min="0.5" max="10" step="0.25" value="1">
+          </div>
+          <div class="arrow-legend">
+            <div class="arrow-legend-item">
+              <svg class="al-svg" data-rate="0.1" viewBox="0 0 20 40"><polygon points="10,1 20,17 0,17" fill="#0f172a"/><rect x="7" y="15" width="6" height="24" fill="#0f172a"/></svg>
+              <span>0,1 m/an</span>
+            </div>
+            <div class="arrow-legend-item">
+              <svg class="al-svg" data-rate="0.5" viewBox="0 0 20 40"><polygon points="10,1 20,17 0,17" fill="#0f172a"/><rect x="7" y="15" width="6" height="24" fill="#0f172a"/></svg>
+              <span>0,5 m/an</span>
+            </div>
+            <div class="arrow-legend-item">
+              <svg class="al-svg" data-rate="1" viewBox="0 0 20 40"><polygon points="10,1 20,17 0,17" fill="#0f172a"/><rect x="7" y="15" width="6" height="24" fill="#0f172a"/></svg>
+              <span>1 m/an</span>
+            </div>
+          </div>
+          <label class="legend-row">
+            <span class="legend-swatch swatch-fort"></span>
+            <span>Exposition forte</span>
+          </label>
+          <label class="legend-row">
+            <span class="legend-swatch swatch-moyen"></span>
+            <span>Exposition moyenne</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="map-loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Chargement des données…</p>
+      </div>
+    </section>
+
+    <!-- ── VUE SIGNAL DE MARCHÉ ───────────────────────────────── -->
+    <section id="view-scatter" class="view hidden">
+      <div class="scatter-header">
+        <div>
+          <h2>Signal de marché</h2>
+          <p>Variation de prix autour de l'obligation d'information sur le risque érosion en fonction du taux de recul côtier mesuré</p>
+        </div>
+        <div class="scatter-controls">
+          <div class="scatter-legend">
+            <span class="dot-legend fort">●</span> Exposition forte
+            <span class="dot-legend moyen">●</span> Exposition moyenne
+            <span class="dot-legend none">●</span> Non classée
+          </div>
+          <div class="scatter-switches">
+            <label class="switch-row">
+              <span class="switch-label">Axe recul en échelle log</span>
+              <span class="switch">
+                <input type="checkbox" id="toggle-log-x">
+                <span class="switch-slider"></span>
+              </span>
+            </label>
+            <label class="switch-row">
+              <span class="switch-label">Axe variation en échelle log</span>
+              <span class="switch">
+                <input type="checkbox" id="toggle-log-y">
+                <span class="switch-slider"></span>
+              </span>
+            </label>
+            <label class="switch-row">
+              <span class="switch-label">Tendance moyenne <span class="trend-dot">—</span></span>
+              <span class="switch">
+                <input type="checkbox" id="toggle-trend">
+                <span class="switch-slider"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="scatter-canvas-wrap">
+        <canvas id="scatter-chart"></canvas>
+      </div>
+      <p class="scatter-note">
+        Chaque point = une commune littorale. L'axe vertical représente la variation relative du prix médian au m² entre la période avant et après l'entrée en vigueur de l'obligation d'information (date individuelle par commune, 2023-2024). La courbe rouge (activable via "Tendance moyenne") affiche la régression linéaire avec son intervalle de confiance à 95 %.
+      </p>
+    </section>
+
+    <!-- ── VUE COMPARAISON ────────────────────────────────────── -->
+    <section id="view-compare" class="view hidden">
+      <div class="compare-header">
+        <h2>Comparaison de communes</h2>
+        <div class="compare-search-row">
+          <div class="compare-search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="compare-search-a" type="text" placeholder="Commune A…" autocomplete="off">
+            <ul id="compare-results-a" class="search-dropdown hidden" role="listbox"></ul>
+          </div>
+          <span class="compare-vs">vs</span>
+          <div class="compare-search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="compare-search-b" type="text" placeholder="Commune B…" autocomplete="off">
+            <ul id="compare-results-b" class="search-dropdown hidden" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="compare-panels" class="compare-panels">
+        <div id="compare-panel-a" class="compare-panel empty">
+          <p class="compare-placeholder">Sélectionnez une commune A</p>
+        </div>
+        <div id="compare-panel-b" class="compare-panel empty">
+          <p class="compare-placeholder">Sélectionnez une commune B</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VUE SOURCES ──────────────────────────────────────────── -->
+    <section id="view-about" class="view hidden">
+      <div class="about-wrap">
+
+        <h2>Sources &amp; données</h2>
+        <p class="about-intro">Ce projet agrège des données publiques ouvertes pour explorer un éventuel signal de marché lié à l'obligation légale d'information sur l'érosion côtière (loi Climat &amp; Résilience, 2021) dans les communes littorales françaises.</p>
+
+        <div class="sources-grid">
+
+          <div class="source-card">
+            <span class="source-tag">Décrets</span>
+            <p class="source-title">Obligation d'information — recul du trait de côte</p>
+            <p class="source-desc">Liste des communes soumises à l'obligation d'information lors des transactions immobilières (décrets n° 2022-750, 2023-698, 2024-531, 2026-95). Inclut les dates d'entrée en vigueur par commune et par vague.</p>
+            <a href="https://www.data.gouv.fr/fr/datasets/liste-des-communes-soumises-a-lobligation-dinformation-sur-le-recul-du-trait-de-cote/" target="_blank" rel="noopener" class="source-link">data.gouv.fr ↗</a>
+          </div>
+
+          <div class="source-card">
+            <span class="source-tag">Prix immobiliers</span>
+            <p class="source-title">DVF géolocalisées — DGFiP / Etalab</p>
+            <p class="source-desc">Demandes de Valeurs Foncières géolocalisées, 2021–2025. Prix au m² des appartements et maisons par commune et semestre. Données disponibles avec un décalage de 6 à 12 mois.</p>
+            <a href="https://files.data.gouv.fr/geo-dvf/" target="_blank" rel="noopener" class="source-link">files.data.gouv.fr/geo-dvf ↗</a>
+          </div>
+
+          <div class="source-card">
+            <span class="source-tag">Trait de côte</span>
+            <p class="source-title">Indicateur national d'érosion côtière — Cerema / GéoLittoral</p>
+            <p class="source-desc">Taux de recul du trait de côte en m/an, mesuré sur les communes littorales métropolitaines à partir de photographies aériennes et relevés terrain. Édition 2018. Couvre environ la moitié des communes du décret (les côtes artificialisées sont exclues).</p>
+            <a href="https://geolittoral.din.developpement-durable.gouv.fr" target="_blank" rel="noopener" class="source-link">geolittoral.din.developpement-durable.gouv.fr ↗</a>
+          </div>
+
+          <div class="source-card">
+            <span class="source-tag">Géographie</span>
+            <p class="source-title">API Géo communes — IGN / DINUM</p>
+            <p class="source-desc">Contours géographiques des communes utilisés pour la carte choroplèthe et la jointure spatiale avec les segments d'érosion GéoLittoral.</p>
+            <a href="https://geo.api.gouv.fr" target="_blank" rel="noopener" class="source-link">geo.api.gouv.fr ↗</a>
+          </div>
+
+          <div class="source-card">
+            <span class="source-tag">Fond de carte</span>
+            <p class="source-title">OpenFreeMap (style Positron) + MapLibre GL JS</p>
+            <p class="source-desc">Tuiles vectorielles open source basées sur OpenStreetMap. Rendu côté client via MapLibre GL JS v4.5.</p>
+            <a href="https://openfreemap.org" target="_blank" rel="noopener" class="source-link">openfreemap.org ↗</a>
+            <span class="source-sep">·</span>
+            <a href="https://maplibre.org" target="_blank" rel="noopener" class="source-link">maplibre.org ↗</a>
+          </div>
+
+        </div>
+
+        <div class="about-method">
+          <h3>Méthodologie</h3>
+          <ul>
+            <li>Les prix médians au m² sont calculés sur les transactions DVF "Appartement" et "Maison" (filtre 100–30 000 €/m²), avec un minimum de 3 transactions par semestre et par commune.</li>
+            <li>Les intervalles de confiance à 95 % sur les graphiques de prix communaux utilisent la formule Kendall &amp; Stuart pour la médiane : IC = médiane ± 1,57 × IQR / √n.</li>
+            <li>La variation "avant/après décret" compare la médiane des semestres avant la date d'entrée en vigueur propre à chaque commune à celle des semestres après — sur une fenêtre de ±1 an ou ±2 ans selon le mode sélectionné.</li>
+            <li>La droite de tendance du graphique de corrélation est une régression MCO avec bande IC 95 % de la droite de régression (intervalle de confiance sur la valeur moyenne estimée, pas sur les prédictions individuelles).</li>
+            <li>La carte choroplèthe utilise les quintiles de la distribution des prix pour les modes "prix médian", et une échelle divergente centrée sur 0 pour les modes de variation.</li>
+          </ul>
+        </div>
+
+        <div class="about-disclaimer">
+          <strong>Avertissement</strong> — Ce projet est une visualisation exploratoire à des fins d'information. La corrélation éventuelle entre taux d'érosion et variation de prix n'établit pas de lien de causalité. De nombreux facteurs indépendants (taux d'intérêt, dynamiques de marché local, saisonnalité, qualité du bien) influent sur les prix immobiliers. Les données DVF 2025 ne couvrent que le premier semestre (décalage de publication).
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
