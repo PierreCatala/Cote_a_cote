@@ -4,6 +4,10 @@ pipeline/node_modules/
 # Fichiers générés / téléchargeables — à reconstruire via le pipeline
 pipeline/erosion.zip
 pipeline/erosion_shp/
+pipeline/all_communes_cache.json
+pipeline/ne_coastline.zip
+pipeline/ne_coastline_fr.json
+pipeline/ne_shp/
 
 # Divers
 .DS_Store
