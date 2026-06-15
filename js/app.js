@@ -3,7 +3,7 @@ const MAP_STYLE  = 'https://tiles.openfreemap.org/styles/positron';
 const DATA_GEOJSON      = 'data/communes_littorales.geojson';
 const DATA_NODECRET     = 'data/communes_nodecret.geojson';
 const DATA_SCATTER      = 'data/scatter.json';
-const DATA_COASTAL_ARCS = 'data/coastal_arcs.geojson';
+const DATA_COASTAL_ZONES = 'data/coastal_zones.geojson';
 
 const COLORS = {
   quintiles: ['#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026'],
@@ -45,7 +45,7 @@ const COMPARE_MAX = 6;
 let map, priceChart, scatterChart;
 let compareCharts = new Map(); // code_insee → Chart
 let compareOverlayChart = null;
-let geojson = null, nodecretGeojson = null, scatterData = [], coastalArcsGeojson = null;
+let geojson = null, nodecretGeojson = null, scatterData = [], coastalZonesGeojson = null;
 let compareSelections = []; // array of props objects
 let showChoropleth = true;
 let compareViewMode = 'side'; // 'side' | 'overlay'
@@ -63,47 +63,64 @@ async function init() {
   bindSearch('#search-input', '#search-results', onSearchSelect);
   bindCompare();
   initSidebarTooltips();
+  initOnboarding();
+}
+
+function initOnboarding() {
+  if (localStorage.getItem('cac_onboarded')) return;
+  const el = document.getElementById('onboarding');
+  if (!el) return;
+  el.classList.remove('hidden');
+  document.getElementById('onboarding-close').addEventListener('click', () => {
+    el.classList.add('hidden');
+    localStorage.setItem('cac_onboarded', '1');
+  });
 }
 
 function initSidebarTooltips() {
-  const tip     = document.getElementById('tooltip-global');
-  const sidebar = document.getElementById('sidebar');
-  let current   = null;
+  const tip = document.getElementById('tooltip-global');
 
-  sidebar.addEventListener('mouseover', (e) => {
-    const nd = e.target.closest('.nd-info');
-    if (nd === current) return;
-    current = nd;
-    if (!nd) { tip.style.display = 'none'; return; }
-    tip.textContent = nd.dataset.tooltip ?? '';
-    const r = nd.getBoundingClientRect();
-    const w = 230;
-    let x = r.left + r.width / 2 - w / 2;
-    x = Math.max(8, Math.min(x, window.innerWidth - w - 8));
-    tip.style.left = x + 'px';
-    tip.style.top  = (r.bottom + 8) + 'px';
-    tip.style.display = 'block';
-  });
+  function bindTooltips(container) {
+    let current = null;
+    container.addEventListener('mouseover', (e) => {
+      const nd = e.target.closest('.nd-info');
+      if (nd === current) return;
+      current = nd;
+      if (!nd) { tip.style.display = 'none'; return; }
+      tip.textContent = nd.dataset.tooltip ?? '';
+      tip.style.display = 'block';
+      const r   = nd.getBoundingClientRect();
+      const w   = 230;
+      const th  = tip.offsetHeight;
+      let x = r.left + r.width / 2 - w / 2;
+      x = Math.max(8, Math.min(x, window.innerWidth - w - 8));
+      const below = r.bottom + 8 + th > window.innerHeight;
+      tip.style.left = x + 'px';
+      tip.style.top  = below ? (r.top - th - 8) + 'px' : (r.bottom + 8) + 'px';
+    });
+    container.addEventListener('mouseleave', () => {
+      tip.style.display = 'none';
+      current = null;
+    });
+  }
 
-  sidebar.addEventListener('mouseleave', () => {
-    tip.style.display = 'none';
-    current = null;
-  });
+  bindTooltips(document.getElementById('sidebar'));
+  bindTooltips(document.getElementById('map-legend'));
 }
 
 // ── Data loading ──────────────────────────────────────────────
 async function loadData() {
   try {
-    const [geoRes, scatRes, ncRes, arcsRes] = await Promise.all([
+    const [geoRes, scatRes, ncRes, zonesRes] = await Promise.all([
       fetch(DATA_GEOJSON),
       fetch(DATA_SCATTER),
       fetch(DATA_NODECRET).catch(() => null),
-      fetch(DATA_COASTAL_ARCS).catch(() => null),
+      fetch(DATA_COASTAL_ZONES).catch(() => null),
     ]);
     geojson     = await geoRes.json();
     scatterData = await scatRes.json();
-    if (ncRes?.ok)  nodecretGeojson  = await ncRes.json();
-    if (arcsRes?.ok) coastalArcsGeojson = await arcsRes.json();
+    if (ncRes?.ok)   nodecretGeojson  = await ncRes.json();
+    if (zonesRes?.ok) coastalZonesGeojson = await zonesRes.json();
 
     // Pré-calcul des deltas fenêtrés ±1 an et ±2 ans par commune
     for (const f of geojson.features) {
@@ -133,8 +150,7 @@ async function loadData() {
       .filter(d => d.price_delta_pct != null);
   } catch (err) {
     document.getElementById('map-loading').innerHTML =
-      `<p style="color:#ef4444;padding:20px;text-align:center">Données introuvables.<br>
-       Exécutez <code>node pipeline/sample.mjs</code> pour générer les données de démo.<br>
+      `<p style="color:#ef4444;padding:20px;text-align:center">Erreur de chargement des données.<br>
        <small>${err.message}</small></p>`;
     throw err;
   }
@@ -156,6 +172,13 @@ function initMap() {
     addCommuneLayers();
     updateMapMode('delta2y');
     document.getElementById('map-loading').style.display = 'none';
+    const urlCode = new URLSearchParams(location.search).get('commune');
+    if (urlCode) {
+      const feat =
+        geojson?.features.find(f => f.properties.code_insee === urlCode) ??
+        nodecretGeojson?.features.find(f => f.properties.code_insee === urlCode);
+      if (feat) openSidebar(feat.properties);
+    }
   });
 
   map.on('click', 'communes-fill', (e) => {
@@ -331,7 +354,7 @@ function addCommuneLayers() {
     });
   }
 
-  try { addCoastalArcLayer(); } catch (e) { console.warn('addCoastalArcLayer:', e); }
+  try { addCoastalZoneLayer(); } catch (e) { console.warn('addCoastalZoneLayer:', e); }
 
   // Bind map mode buttons
   document.querySelectorAll('.legend-mode-btn').forEach(btn =>
@@ -379,20 +402,12 @@ function addCommuneLayers() {
       .forEach(id => map.setLayoutProperty(id, 'visibility', vis));
   });
 
-  // Toggle trait de côte
+  // Toggle zones de recul
   document.getElementById('toggle-arrows').addEventListener('change', (e) => {
-    if (map.getLayer('coastal-arcs-line'))
-      map.setLayoutProperty('coastal-arcs-line', 'visibility', e.target.checked ? 'visible' : 'none');
+    const vis = e.target.checked ? 'visible' : 'none';
+    ['coastal-zones-fill', 'coastal-zones-outline']
+      .forEach(id => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis); });
   });
-
-  // Slider épaisseur trait de côte
-  document.getElementById('slider-arrows').addEventListener('input', (e) => {
-    const m = parseFloat(e.target.value);
-    if (map.getLayer('coastal-arcs-line'))
-      map.setPaintProperty('coastal-arcs-line', 'line-width', arcWidthExpr(m));
-    updateArcLegend();
-  });
-  updateArcLegend();
 }
 
 // Couleurs du spectre érosion : jaune → orange → rouge (échelle log)
@@ -403,53 +418,69 @@ const ARC_COLOR_EXPR = [
    0.693, '#dc2626',   // ln(2)   — rouge
 ];
 
-function arcWidthExpr(m) {
-  // 0.5 + ln(rate/0.1) → 0.5px à 0.1 m/an, ~2.1px à 0.5, ~3.5px à 2, ~4.6px à 6
-  const logRate = ['+', 0.5, ['max', 0, ['ln', ['/', ['max', ['get', 'erosion_rate'], 0.01], 0.1]]]];
-  return [
-    'interpolate', ['linear'], ['zoom'],
-    5,  ['*', 0.8 * m, logRate],
-    11, ['*', 2.2 * m, logRate],
-  ];
-}
+function addCoastalZoneLayer() {
+  if (!coastalZonesGeojson) return;
 
-function updateArcLegend() {
-  const m    = parseFloat(document.getElementById('slider-arrows')?.value ?? 1);
-  const zoom = map ? Math.max(5, Math.min(11, map.getZoom())) : 7;
-  const t    = (zoom - 5) / 6;
-  const factor = 0.8 + t * (2.2 - 0.8);
-  document.querySelectorAll('.arc-swatch').forEach(el => {
-    const rate = parseFloat(el.dataset.rate);
-    const logRate = 0.5 + Math.max(0, Math.log(Math.max(rate, 0.01) / 0.1));
-    el.style.height = `${Math.max(factor * m * logRate, 1).toFixed(1)}px`;
-  });
-}
+  map.addSource('coastal-zones', { type: 'geojson', data: coastalZonesGeojson });
 
-function addCoastalArcLayer() {
-  if (!coastalArcsGeojson) return;
-
-  map.addSource('coastal-arcs', {
-    type: 'geojson',
-    data: coastalArcsGeojson,
-  });
-
+  // Aplat semi-transparent coloré par vitesse de recul — au-dessus de tout
   map.addLayer({
-    id: 'coastal-arcs-line',
-    type: 'line',
-    source: 'coastal-arcs',
-    layout: {
-      'line-join': 'round',
-      'line-cap':  'round',
-      'visibility': 'visible',
-    },
+    id: 'coastal-zones-fill',
+    type: 'fill',
+    source: 'coastal-zones',
     paint: {
-      'line-color':   ARC_COLOR_EXPR,
-      'line-width':   arcWidthExpr(2),
-      'line-opacity': 0.9,
+      'fill-color':   ARC_COLOR_EXPR,
+      'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.7, 10, 0.55],
     },
   });
 
-  map.on('zoom', updateArcLegend);
+  // Contour sombre pour faire ressortir les zones sur l'aplat
+  map.addLayer({
+    id: 'coastal-zones-outline',
+    type: 'line',
+    source: 'coastal-zones',
+    paint: {
+      'line-color': [
+        'interpolate', ['linear'], ['ln', ['max', ['get', 'erosion_rate'], 0.01]],
+        -2.303, '#b45309',   // jaune → brun-ambré
+        -0.693, '#c2410c',   // orange → orange foncé
+         0.693, '#991b1b',   // rouge → rouge sombre
+      ],
+      'line-width':   ['interpolate', ['linear'], ['zoom'], 5, 6, 8, 2.5, 12, 1.2],
+      'line-opacity': 1,
+    },
+  });
+
+  // Tooltip au survol
+  const popup = new maplibregl.Popup({
+    closeButton: false, closeOnClick: false, className: 'zone-popup',
+  });
+
+  map.on('mousemove', 'coastal-zones-fill', (e) => {
+    const p = e.features[0]?.properties;
+    if (!p) return;
+    const segsStr = (p.taux_segments ?? 1) > 1
+      ? `<span class="zone-popup-segs">${p.taux_segments} tronçons</span>` : '';
+    popup.setLngLat(e.lngLat)
+      .setHTML(`<strong>${p.nom}</strong><br>${p.erosion_rate} m/an ${segsStr}`)
+      .addTo(map);
+  });
+
+  map.on('mouseleave', 'coastal-zones-fill', () => {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+  });
+
+  map.on('click', 'coastal-zones-fill', (e) => {
+    const code = e.features[0]?.properties?.code_insee;
+    if (!code) return;
+    popup.remove();
+    const feat =
+      geojson?.features.find(f => f.properties.code_insee === code) ??
+      nodecretGeojson?.features.find(f => f.properties.code_insee === code);
+    if (feat) openSidebar(feat.properties);
+  });
+  map.on('mouseenter', 'coastal-zones-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
 }
 
 function recomputePrice(features, sems) {
@@ -509,7 +540,10 @@ function buildLegend() { buildLegendPrice(); }
 
 function buildLegendPrice() {
   const explain = document.getElementById('legend-delta-explain');
-  if (explain) explain.classList.add('hidden');
+  if (explain) {
+    explain.textContent = 'Chaque couleur = 20 % des communes (quintiles)';
+    explain.classList.remove('hidden');
+  }
   document.getElementById('legend-gradient').style.background =
     `linear-gradient(to right, ${COLORS.quintiles.join(', ')})`;
   document.getElementById('legend-price-title').innerHTML =
@@ -545,7 +579,10 @@ function buildLegendDelta(mode) {
       return `<span>${v > 0 ? '+' : ''}${v}%</span>`;
     }).join('');
   const explain = document.getElementById('legend-delta-explain');
-  if (explain) explain.classList.remove('hidden');
+  if (explain) {
+    explain.textContent = 'Variation du prix médian au m² dans la fenêtre temporelle sélectionnée';
+    explain.classList.remove('hidden');
+  }
 }
 
 function updateMapMode(mode) {
@@ -585,6 +622,7 @@ function updateMapMode(mode) {
 function openSidebar(props) {
   const sidebar = document.getElementById('sidebar');
   sidebar.classList.remove('hidden');
+  history.replaceState(null, '', `?commune=${props.code_insee}`);
 
   document.getElementById('sb-name').textContent = props.nom ?? '—';
   document.getElementById('sb-dept').textContent = `Dép. ${props.departement ?? '??'}`;
@@ -604,9 +642,18 @@ function openSidebar(props) {
   const rateEl  = document.getElementById('sb-rate');
   const rateNd  = document.getElementById('sb-rate-nd');
   const rateAvg = document.getElementById('sb-rate-avg');
-  if (rate > 0)                { rateEl.textContent = `${rate} m/an`; rateNd.hidden = true; }
-  else if (props.erosion_class) { rateEl.textContent = 'N/D';          rateNd.hidden = false; }
-  else                          { rateEl.textContent = '—';            rateNd.hidden = true; }
+  if (rate > 0) {
+    rateEl.textContent = `${rate} m/an`;
+    rateNd.hidden = true;
+  } else if (props.obligation_date) {
+    rateEl.textContent = 'N/D';
+    rateNd.dataset.tooltip = "La commune est classée en zone d'exposition à l'érosion par le décret, mais les mesures terrain du Cerema (GéoLittoral 2018) ne couvrent pas ce secteur ou ne fournissent pas de taux précis en m/an pour ce linéaire côtier.";
+    rateNd.hidden = false;
+  } else {
+    rateEl.textContent = '—';
+    rateNd.dataset.tooltip = "Aucune mesure de recul du trait de côte disponible pour cette commune dans les données Cerema (GéoLittoral 2018).";
+    rateNd.hidden = false;
+  }
   const segs = props.taux_segments ?? 1;
   if (rate > 0 && segs > 1) {
     rateAvg.dataset.tooltip = `Moyenne calculée sur ${segs} tronçons mesurés par le Cerema sur ce littoral.`;
@@ -772,6 +819,7 @@ function openSidebar(props) {
 
 document.getElementById('sidebar-close').onclick = () => {
   document.getElementById('sidebar').classList.add('hidden');
+  history.replaceState(null, '', location.pathname);
 };
 
 document.getElementById('legend-toggle').addEventListener('click', () => {

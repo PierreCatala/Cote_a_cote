@@ -22,6 +22,7 @@ const SHP            = resolve(__dir, 'erosion_shp/N_evolution_trait_cote_fr_eps
 const GEOJSON        = resolve(__dir, '../data/communes_littorales.geojson');
 const NODECRET       = resolve(__dir, '../data/communes_nodecret.geojson');
 const COASTAL_ARCS   = resolve(__dir, '../data/coastal_arcs.geojson');
+const COASTAL_ZONES  = resolve(__dir, '../data/coastal_zones.geojson');
 const ALL_COMMUNES_CACHE = resolve(__dir, 'all_communes_cache.json');
 
 const L93 = '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
@@ -101,7 +102,7 @@ async function main() {
   console.log('  Traitement en cours…\n');
 
   // ── 4. Pour chaque commune : clip → union → exterior ring ────
-  const arcs = [];
+  const arcs = [], zones = [];
   let withData = 0, noData = 0;
 
   for (const commune of allCommunes) {
@@ -162,17 +163,34 @@ async function main() {
       : null;
     const erosionClass = classifyTaux(medTaux);
 
+    const nom = nomMap.get(commune.code) ?? commune.code;
     arcs.push({
       type: 'Feature',
       geometry: { type: 'LineString', coordinates: arcCoords },
       properties: {
         code_insee:    commune.code,
-        nom:           nomMap.get(commune.code) ?? commune.code,
+        nom,
         taux:          medTaux != null ? Math.round(medTaux * 100) / 100 : null,
         erosion_rate:  erosionRate,
         erosion_class: erosionClass,
+        taux_segments: tauxValid.length,
       },
     });
+
+    if (erosionRate > 0) {
+      const simplifiedPoly = turf.simplify(merged, { tolerance: 0.0002, highQuality: false });
+      zones.push({
+        type: 'Feature',
+        geometry: simplifiedPoly.geometry,
+        properties: {
+          code_insee:    commune.code,
+          nom,
+          erosion_rate:  erosionRate,
+          erosion_class: erosionClass,
+          taux_segments: tauxValid.length,
+        },
+      });
+    }
 
     withData++;
     process.stdout.write(withData % 50 === 0 ? `\n  [${withData}] ` : '.');
@@ -182,12 +200,11 @@ async function main() {
   console.log(`  ${noData} communes sans intersection Cerema`);
 
   // ── 5. Écriture ───────────────────────────────────────────────
-  await writeFile(
-    COASTAL_ARCS,
-    JSON.stringify({ type: 'FeatureCollection', features: arcs }),
-    'utf8'
-  );
-  console.log('\n✅ coastal_arcs.geojson mis à jour — rechargez le site.\n');
+  await Promise.all([
+    writeFile(COASTAL_ARCS,  JSON.stringify({ type: 'FeatureCollection', features: arcs }),  'utf8'),
+    writeFile(COASTAL_ZONES, JSON.stringify({ type: 'FeatureCollection', features: zones }), 'utf8'),
+  ]);
+  console.log(`\n✅ coastal_arcs.geojson (${arcs.length} arcs) + coastal_zones.geojson (${zones.length} zones) mis à jour.\n`);
 
   // ── Résumé par classe ─────────────────────────────────────────
   const byClass = {};

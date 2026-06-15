@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cote à côte — Érosion côtière et prix immobiliers</title>
+  <title>Côte à côte — Érosion côtière et prix immobiliers</title>
+  <meta name="description" content="Explorez la relation entre érosion côtière et prix immobiliers sur le littoral français. Données Cerema, DVF géolocalisées et décrets d'obligation d'information.">
+  <meta property="og:title" content="Côte à côte — Érosion côtière & prix immobiliers">
+  <meta property="og:description" content="Visualisation interactive de l'impact du recul du trait de côte sur les prix de l'immobilier dans les communes littorales françaises.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Côte à côte — Érosion côtière & prix immobiliers">
+  <meta name="twitter:description" content="Visualisation interactive de l'impact du recul du trait de côte sur les prix de l'immobilier dans les communes littorales françaises.">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -25,7 +32,7 @@
       </button>
       <button id="btn-scatter" class="tab-btn" role="tab" aria-selected="false">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="12" r="1.5"/><circle cx="12" cy="7" r="1.5"/><circle cx="17" cy="16" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="15" cy="4" r="1.5"/></svg>
-        <span class="tab-label">Nuage</span>
+        <span class="tab-label">Nuage de points</span>
       </button>
       <button id="btn-compare" class="tab-btn" role="tab" aria-selected="false">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>
@@ -170,30 +177,26 @@
         <!-- 4. VITESSE DE RECUL -->
         <div class="legend-block">
           <label class="legend-title-row">
-            <p class="legend-title">Vitesse de recul du trait de côte <span class="nd-info" data-tooltip="Le taux de recul est calculé par comparaison de photographies aériennes anciennes (1920-1957) et récentes (2005-2014). Il représente une tendance structurelle, pas une mesure annuelle récente.">?</span></p>
+            <p class="legend-title">Zones de recul du trait de côte <span class="nd-info" data-tooltip="Zones de mesure Cerema (GéoLittoral 2018) où le trait de côte recule. Colorées par vitesse de recul. Le taux est calculé par comparaison de photographies aériennes anciennes (1920-1957) et récentes (2005-2014).">?</span></p>
             <span class="switch">
               <input type="checkbox" id="toggle-arrows" checked>
               <span class="switch-slider"></span>
             </span>
           </label>
-          <div class="arrow-size-row">
-            <span class="arrow-size-label">Épaisseur</span>
-            <input type="range" id="slider-arrows" min="0.5" max="10" step="0.25" value="2">
-          </div>
           <div class="arc-legend">
             <div class="arc-legend-item">
-              <div class="arc-swatch" data-rate="0.1" style="background:#fde047"></div>
+              <div class="arc-swatch" style="background:#fde047"></div>
               <span>0,1 m/an</span>
               <span class="arc-example">ex. Cancale (35)</span>
             </div>
             <div class="arc-legend-item">
-              <div class="arc-swatch" data-rate="0.5" style="background:#f97316"></div>
+              <div class="arc-swatch" style="background:#f97316"></div>
               <span>0,5 m/an</span>
               <span class="arc-example">ex. Lacanau (33)</span>
             </div>
             <div class="arc-legend-item">
-              <div class="arc-swatch" data-rate="2" style="background:#dc2626"></div>
-              <span>2 m/an</span>
+              <div class="arc-swatch" style="background:#dc2626"></div>
+              <span>≥ 2 m/an</span>
               <span class="arc-example">ex. Sangatte (62)</span>
             </div>
           </div>
@@ -210,6 +213,10 @@
 
     <!-- ── VUE SIGNAL DE MARCHÉ ───────────────────────────────── -->
     <section id="view-scatter" class="view hidden">
+      <div class="mobile-notice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Vue optimisée pour tablette ou écran plus large — privilégiez l'onglet <strong>&nbsp;Carte&nbsp;</strong> sur mobile.
+      </div>
       <div class="scatter-header">
         <div>
           <h2>Nuage de points</h2>
@@ -254,6 +261,10 @@
 
     <!-- ── VUE COMPARAISON ────────────────────────────────────── -->
     <section id="view-compare" class="view hidden">
+      <div class="mobile-notice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Vue optimisée pour tablette ou écran plus large — privilégiez l'onglet <strong>&nbsp;Carte&nbsp;</strong> sur mobile.
+      </div>
       <div class="compare-header">
         <div class="compare-title-row">
           <h2>Comparaison de communes</h2>
@@ -363,6 +374,33 @@
     </section>
 
   </main>
+
+  <!-- Panneau d'onboarding (affiché une seule fois) -->
+  <div id="onboarding" class="onboarding-overlay hidden" role="dialog" aria-modal="true" aria-label="Comment lire cette carte">
+    <div class="onboarding-panel">
+      <h3>Comment lire cette carte ?</h3>
+      <ul class="onboarding-list">
+        <li>
+          <span class="onboarding-dot" style="background:linear-gradient(to right,#15803d,#86efac,#f8fafc,#fca5a5,#b91c1c)"></span>
+          <div><strong>Aplats de couleur</strong> — prix médian au m² ou variation des prix par commune avant et après la prise d'un décret d'obligation d'information sur l'érosion côtière les concernant</div>
+        </li>
+        <li>
+          <span class="swatch-decret" style="margin-top:2px"></span>
+          <div><strong>Communes hachurées</strong> — couvertes par un décret d'obligation d'information (n° 2022-750, 2023-698, 2024-531 ou 2026-95). Vendeurs et bailleurs doivent informer acquéreurs et locataires de l'exposition du bien au recul du trait de côte</div>
+        </li>
+        <li>
+          <span class="onboarding-dot" style="background:#f97316;border:2px solid #c2410c"></span>
+          <div><strong>Littoraux oranges/rouges</strong> — secteurs où le trait de côte recule, mesurés par le Cerema. La couleur indique la vitesse : jaune (0,1 m/an) → rouge (≥ 2 m/an)</div>
+        </li>
+        <li>
+          <span class="onboarding-dot" style="background:#fff;border:2px solid #94a3b8"></span>
+          <div><strong>Cliquez sur une commune</strong> pour voir ses courbes de prix et ses indicateurs. Comparez plusieurs communes via l'onglet <em>Comparer</em>, explorez la corrélation via <em>Nuage</em></div>
+        </li>
+      </ul>
+      <p class="onboarding-data">Sources : DVF (2021–2025) · Cerema GéoLittoral (2018) · Décrets publiés au Journal officiel (Légifrance)</p>
+      <button id="onboarding-close" class="btn-primary">Commencer</button>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
