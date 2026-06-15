@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Après moi le déluge — Érosion côtière et prix immobiliers</title>
+  <title>Cote à côte — Érosion côtière et prix immobiliers</title>
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,7 +13,7 @@
     <div class="logo">
       <span class="logo-icon">🌊</span>
       <div class="logo-words">
-        <span class="logo-text">Après moi le déluge</span>
+        <span class="logo-text">Cote à côte</span>
         <span class="logo-sub">Le recul du trait de côte impacte-t-il le prix de l'immobilier dans votre commune&nbsp;?</span>
       </div>
     </div>
@@ -75,7 +75,7 @@
             <span id="sb-price" class="kpi-value"></span>
           </div>
           <div class="kpi">
-            <span class="kpi-label">Variation post-2023</span>
+            <span class="kpi-label">Variation des prix post-décret <span class="nd-info" data-tooltip="Comparaison de la médiane des prix au m² sur les 2 années précédant et les 2 années suivant la date d'entrée en vigueur du décret propre à chaque commune. Affiché «—» pour les communes non couvertes par un décret.">?</span></span>
             <span id="sb-delta" class="kpi-value"></span>
           </div>
         </div>
@@ -83,9 +83,10 @@
         <div class="chart-wrap">
           <div class="chart-title">
             <span>Prix au m² par semestre</span>
-            <span class="chart-law-label">◀&nbsp;avant jan.&nbsp;2023&nbsp;·&nbsp;après&nbsp;▶</span>
           </div>
-          <canvas id="price-chart" height="160"></canvas>
+          <div class="chart-canvas-wrap">
+            <canvas id="price-chart"></canvas>
+          </div>
         </div>
 
         <button id="compare-add-btn" class="btn-outline">Ajouter à la comparaison</button>
@@ -99,25 +100,23 @@
 
           <div class="legend-sub-block">
             <label class="legend-title-row">
-              <p class="legend-subtitle">Communes couvertes par un décret</p>
+              <div class="legend-title-inner">
+                <span class="legend-swatch swatch-decret"></span>
+                <p class="legend-subtitle">Communes couvertes par un décret</p>
+              </div>
               <span class="switch">
                 <input type="checkbox" id="toggle-erosion" checked>
                 <span class="switch-slider"></span>
               </span>
             </label>
-            <label class="legend-row">
-              <span class="legend-swatch swatch-fort"></span>
-              <span>Exposition forte</span>
-            </label>
-            <label class="legend-row">
-              <span class="legend-swatch swatch-moyen"></span>
-              <span>Exposition moyenne</span>
-            </label>
           </div>
 
           <div class="legend-sub-block">
             <label class="legend-title-row">
-              <p class="legend-subtitle">Communes en recul du trait de côte<br>sans décret d'obligation d'information</p>
+              <div class="legend-title-inner">
+                <span class="legend-swatch swatch-nodecret"></span>
+                <p class="legend-subtitle">Communes en recul du trait de côte<br>sans décret d'obligation d'information</p>
+              </div>
               <span class="switch">
                 <input type="checkbox" id="toggle-nodecret" checked>
                 <span class="switch-slider"></span>
@@ -131,18 +130,18 @@
         <!-- 3. VARIATION DE PRIX -->
         <div class="legend-block">
           <label class="legend-title-row">
-            <p class="legend-title">Valeurs foncières</p>
+            <p class="legend-title">Valeurs foncières <span class="nd-info" data-tooltip="Source : Demandes de Valeurs Foncières (DVF), DGFiP, via data.gouv.fr. Méthode : médiane du prix au m² (appartements et maisons) par semestre calendaire. La variation est calculée entre la médiane sur les semestres avant et après la date d'entrée en vigueur de l'obligation d'information, propre à chaque commune." onclick="event.stopPropagation()">?</span></p>
             <span class="switch">
               <input type="checkbox" id="toggle-choropleth" checked>
               <span class="switch-slider"></span>
             </span>
           </label>
-          <p class="legend-mode-group-label">Variation relative des prix moyens autour des prises de décrets</p>
+          <p class="legend-mode-group-label">Variation relative des prix moyens autour des prises de décrets :</p>
           <div class="legend-mode-row">
             <button class="legend-mode-btn" data-mode="delta1y">1 an avant·après</button>
             <button class="legend-mode-btn active" data-mode="delta2y">2 ans avant·après</button>
           </div>
-          <p class="legend-mode-group-label">Prix absolus</p>
+          <p class="legend-mode-group-label">Prix absolus :</p>
           <div class="legend-mode-row">
             <button class="legend-mode-btn" data-mode="price">Prix médian au m²</button>
           </div>
@@ -208,13 +207,11 @@
       <div class="scatter-header">
         <div>
           <h2>Nuage de points</h2>
-          <p>Variation de prix autour de l'obligation d'information sur le risque érosion en fonction du taux de recul côtier mesuré</p>
+          <p>Variation moyenne des prix deux ans avant et après prise d'un décret portant obligation d'information des locataires et acheteurs sur le risque érosion vs taux de recul côtier mesuré</p>
         </div>
         <div class="scatter-controls">
           <div class="scatter-legend">
-            <span class="dot-legend fort">●</span> Exposition forte
-            <span class="dot-legend moyen">●</span> Exposition moyenne
-            <span class="dot-legend none">●</span> Non classée
+            <span class="dot-legend decret">●</span> Communes sous décret
           </div>
           <div class="scatter-switches">
             <label class="switch-row">
@@ -365,5 +362,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
   <script type="module" src="js/app.js"></script>
+  <div id="tooltip-global" aria-hidden="true"></div>
 </body>
 </html>

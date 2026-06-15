@@ -7,9 +7,7 @@ const DATA_COASTAL_ARCS = 'data/coastal_arcs.geojson';
 
 const COLORS = {
   quintiles: ['#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026'],
-  fort:  { fill: 'rgba(220,38,38,0.45)', stroke: '#dc2626' },
-  moyen: { fill: 'rgba(251,191,36,0.30)', stroke: '#d97706' },
-  dot:   { fort: '#ef4444', moyen: '#f59e0b', none: '#94a3b8' },
+  dot:   { decret: '#0ea5e9', none: '#94a3b8' },
 };
 
 const SEMESTERS = ['2021-S1','2021-S2','2022-S1','2022-S2','2023-S1','2023-S2','2024-S1','2024-S2','2025-S1','2025-S2'];
@@ -64,6 +62,33 @@ async function init() {
   bindNav();
   bindSearch('#search-input', '#search-results', onSearchSelect);
   bindCompare();
+  initSidebarTooltips();
+}
+
+function initSidebarTooltips() {
+  const tip     = document.getElementById('tooltip-global');
+  const sidebar = document.getElementById('sidebar');
+  let current   = null;
+
+  sidebar.addEventListener('mouseover', (e) => {
+    const nd = e.target.closest('.nd-info');
+    if (nd === current) return;
+    current = nd;
+    if (!nd) { tip.style.display = 'none'; return; }
+    tip.textContent = nd.dataset.tooltip ?? '';
+    const r = nd.getBoundingClientRect();
+    const w = 230;
+    let x = r.left + r.width / 2 - w / 2;
+    x = Math.max(8, Math.min(x, window.innerWidth - w - 8));
+    tip.style.left = x + 'px';
+    tip.style.top  = (r.bottom + 8) + 'px';
+    tip.style.display = 'block';
+  });
+
+  sidebar.addEventListener('mouseleave', () => {
+    tip.style.display = 'none';
+    current = null;
+  });
 }
 
 // ── Data loading ──────────────────────────────────────────────
@@ -90,6 +115,22 @@ async function loadData() {
       if (d1 !== null) p.delta_1y = d1;
       if (d2 !== null) p.delta_2y = d2;
     }
+
+    // Aligne le scatter sur la même méthode que la sidebar :
+    // delta_2y = fenêtre symétrique 4 sem. avant/après l'obligation_date propre à chaque commune.
+    // price_delta_pct dans scatter.json utilise une coupure fixe 2021-2022 / 2023-2025 — incorrect
+    // pour les communes dont le décret date de 2022 ou 2024.
+    const delta2yMap = new Map(
+      geojson.features
+        .filter(f => f.properties.delta_2y != null)
+        .map(f => [f.properties.code_insee, f.properties.delta_2y])
+    );
+    scatterData = scatterData
+      .map(d => {
+        const d2 = delta2yMap.get(d.code_insee);
+        return d2 != null ? { ...d, price_delta_pct: d2 } : d;
+      })
+      .filter(d => d.price_delta_pct != null);
   } catch (err) {
     document.getElementById('map-loading').innerHTML =
       `<p style="color:#ef4444;padding:20px;text-align:center">Données introuvables.<br>
@@ -154,7 +195,7 @@ function addCommuneLayers() {
   window._priceMin = prices[0];
   window._priceMax = prices[prices.length - 1];
 
-  // Hatch pattern — exposition forte (diagonales grises pleines, fond transparent)
+  // Hatch pattern — commune sous décret (diagonales grises, fond transparent)
   const HS = 16;
   const hc = document.createElement('canvas');
   hc.width = HS; hc.height = HS;
@@ -164,20 +205,7 @@ function addCommuneLayers() {
   for (let i = -HS; i <= HS * 2; i += HS / 2) {
     hCtx.beginPath(); hCtx.moveTo(i, HS); hCtx.lineTo(i + HS, 0); hCtx.stroke();
   }
-  map.addImage('fort-hatch', { width: HS, height: HS, data: hCtx.getImageData(0, 0, HS, HS).data });
-
-  // Hatch pattern — exposition moyenne (diagonales grises en pointillés, fond transparent)
-  const MS = 16;
-  const mc = document.createElement('canvas');
-  mc.width = MS; mc.height = MS;
-  const mCtx = mc.getContext('2d');
-  mCtx.strokeStyle = 'rgba(55,65,81,0.85)';
-  mCtx.lineWidth = 1.5;
-  mCtx.setLineDash([3, 4]);
-  for (let i = -MS; i <= MS * 2; i += MS / 2) {
-    mCtx.beginPath(); mCtx.moveTo(i, MS); mCtx.lineTo(i + MS, 0); mCtx.stroke();
-  }
-  map.addImage('moyen-hatch', { width: MS, height: MS, data: mCtx.getImageData(0, 0, MS, MS).data });
+  map.addImage('decret-hatch', { width: HS, height: HS, data: hCtx.getImageData(0, 0, HS, HS).data });
 
   map.addSource('communes', { type: 'geojson', data: geojson });
 
@@ -235,40 +263,20 @@ function addCommuneLayers() {
     map.setFilter('communes-hover', ['==', ['get', 'code_insee'], '']);
   });
 
-  // Erosion overlay — fort (hachuré diagonal rouge)
+  // Erosion overlay — communes sous décret (hachuré diagonal gris)
   map.addLayer({
-    id: 'erosion-fort-fill',
+    id: 'erosion-decret-fill',
     type: 'fill',
     source: 'communes',
-    filter: ['==', ['get', 'erosion_class'], 'fort'],
-    paint: { 'fill-pattern': 'fort-hatch' },
+    filter: ['in', ['get', 'erosion_class'], ['literal', ['fort', 'moyen']]],
+    paint: { 'fill-pattern': 'decret-hatch' },
   });
   map.addLayer({
-    id: 'erosion-fort-outline',
+    id: 'erosion-decret-outline',
     type: 'line',
     source: 'communes',
-    filter: ['==', ['get', 'erosion_class'], 'fort'],
-    paint: { 'line-color': 'rgba(55,65,81,0.75)', 'line-width': 2.5 },
-  });
-
-  // Erosion overlay — moyen (rayures oranges en pointillés, fond transparent)
-  map.addLayer({
-    id: 'erosion-moyen-fill',
-    type: 'fill',
-    source: 'communes',
-    filter: ['==', ['get', 'erosion_class'], 'moyen'],
-    paint: { 'fill-pattern': 'moyen-hatch' },
-  });
-  map.addLayer({
-    id: 'erosion-moyen-outline',
-    type: 'line',
-    source: 'communes',
-    filter: ['==', ['get', 'erosion_class'], 'moyen'],
-    paint: {
-      'line-color': 'rgba(55,65,81,0.75)',
-      'line-width': 2,
-      'line-dasharray': [3, 2],
-    },
+    filter: ['in', ['get', 'erosion_class'], ['literal', ['fort', 'moyen']]],
+    paint: { 'line-color': 'rgba(55,65,81,0.75)', 'line-width': 2 },
   });
 
   // ── Communes côtières sans décret ──────────────────────────
@@ -301,7 +309,7 @@ function addCommuneLayers() {
       source: 'communes-nc',
       paint: {
         'line-color': '#94a3b8',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.5, 9, 1.5],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.8, 9, 1.8],
         'line-opacity': 0.7,
       },
     }, 'communes-fill');
@@ -367,7 +375,7 @@ function addCommuneLayers() {
   // Toggle erosion contours
   document.getElementById('toggle-erosion').addEventListener('change', (e) => {
     const vis = e.target.checked ? 'visible' : 'none';
-    ['erosion-fort-fill','erosion-fort-outline','erosion-moyen-fill','erosion-moyen-outline']
+    ['erosion-decret-fill','erosion-decret-outline']
       .forEach(id => map.setLayoutProperty(id, 'visibility', vis));
   });
 
@@ -583,13 +591,9 @@ function openSidebar(props) {
 
   // Erosion badge
   const badge = document.getElementById('sb-erosion-badge');
-  if (props.erosion_class === 'fort') {
-    badge.textContent = 'Exposition forte';
-    badge.className = 'badge badge-fort';
-    badge.classList.remove('hidden');
-  } else if (props.erosion_class === 'moyen') {
-    badge.textContent = 'Exposition moyenne';
-    badge.className = 'badge badge-moyen';
+  if (props.erosion_class) {
+    badge.textContent = 'Commune sous décret';
+    badge.className = 'badge badge-decret';
     badge.classList.remove('hidden');
   } else {
     badge.classList.add('hidden');
@@ -606,7 +610,7 @@ function openSidebar(props) {
   const price = props.price_median_m2;
   document.getElementById('sb-price').textContent = price > 0 ? `${fmt(price)} €/m²` : '—';
 
-  const delta = props.price_delta_pct;
+  const delta = props.delta_2y ?? null;
   const deltaEl = document.getElementById('sb-delta');
   if (delta != null && delta !== 0) {
     deltaEl.textContent = `${delta > 0 ? '+' : ''}${delta.toFixed(1)} %`;
@@ -767,9 +771,7 @@ function initScatter() {
   const ctx = document.getElementById('scatter-chart').getContext('2d');
 
   _scatterGroups = [
-    { label: 'Exposition forte',   cls: 'fort',  color: COLORS.dot.fort  },
-    { label: 'Exposition moyenne', cls: 'moyen', color: COLORS.dot.moyen },
-    { label: 'Non classée',        cls: null,    color: COLORS.dot.none  },
+    { label: 'Communes sous décret', color: COLORS.dot.decret },
   ];
   const SCATTER_GROUPS = _scatterGroups;
 
@@ -778,10 +780,8 @@ function initScatter() {
 
   _buildDataset = (group, logX = false, logY = false, animated = false) => ({
     label: group.label,
-    _cls: group.cls,
     order: 1,
     data: scatterData
-      .filter(d => d.erosion_class === group.cls)
       .filter(d => !logX || (d.erosion_rate > 0))
       .map(d => ({
         x: d.erosion_rate,
@@ -813,47 +813,67 @@ function initScatter() {
     return { slope, intercept, sRes, xMean, Sxx, n };
   }
 
-  // Retourne [trendLine, ciUpper, ciLower] — tous hidden par défaut
-  function buildTrendDatasets(logX = false, logY = false) {
-    const base = extra => ({
-      type: 'line', hidden: true, tension: 0.3,
-      pointRadius: 0, hitRadius: 0, fill: false,
-      ...extra,
-    });
+  const TREND_IDX    = SCATTER_GROUPS.length;      // 1
+  const CI_UPPER_IDX = SCATTER_GROUPS.length + 1;  // 2
+  const CI_LOWER_IDX = SCATTER_GROUPS.length + 2;  // 3
+
+  // Régression toujours en espace brut (jamais symlog ni log10).
+  // logX : espace les points de la courbe en log10(x) pour une couverture uniforme sur axe log
+  //        (sans ça, les points s'entassent à droite et un gouffre apparaît < 0.1 m/an).
+  //        La régression reste inchangée — seule la grille d'échantillonnage change.
+  // logY : transforme y en symlog pour l'affichage ; orig garde la valeur brute pour le tooltip.
+  function computeTrendData(logX = false, logY = false) {
     const pts = scatterData
-      .filter(d => d.erosion_rate != null && d.price_delta_pct != null)
-      .filter(d => !logX || d.erosion_rate > 0)
-      .map(d => ({ x: d.erosion_rate, y: logY ? symlog(d.price_delta_pct) : d.price_delta_pct }));
+      .filter(d => d.erosion_rate != null && d.price_delta_pct != null && d.erosion_rate > 0)
+      .map(d => ({ x: d.erosion_rate, y: d.price_delta_pct }));
     const reg = linRegressionFull(pts);
-    if (!reg) {
-      return [
-        base({ label: 'Tendance',    data: [], borderColor: '#ef4444', borderWidth: 2, borderDash: [6, 3], order: 2 }),
-        base({ label: '_ci_upper',   data: [], borderColor: 'transparent', backgroundColor: 'rgba(239,68,68,0.12)', fill: '+1', order: 0 }),
-        base({ label: '_ci_lower',   data: [], borderColor: 'transparent', backgroundColor: 'transparent', order: 0 }),
-      ];
-    }
+    if (!reg) return { lineData: [], upperData: [], lowerData: [] };
     const { slope, intercept, sRes, xMean, Sxx, n } = reg;
-    const xs = pts.map(p => p.x);
-    const x0 = Math.min(...xs), x1 = Math.max(...xs);
-    const N   = 40;
+    const xs  = pts.map(p => p.x);
+    const xMin = Math.min(...xs), xMax = Math.max(...xs);
+    const N = 60;
     const lineData = [], upperData = [], lowerData = [];
     for (let i = 0; i <= N; i++) {
-      const x  = x0 + (x1 - x0) * i / N;
-      const y  = slope * x + intercept;
-      const ci = 1.96 * sRes * Math.sqrt(1 / n + Math.pow(x - xMean, 2) / Sxx);
-      lineData.push({ x: +x.toFixed(3), y: +y.toFixed(2) });
-      upperData.push({ x: +x.toFixed(3), y: +(y + ci).toFixed(2) });
-      lowerData.push({ x: +x.toFixed(3), y: +(y - ci).toFixed(2) });
+      // échantillonnage uniforme en log10 si logX, linéaire sinon
+      const xf = logX
+        ? Math.pow(10, Math.log10(xMin) + (Math.log10(xMax) - Math.log10(xMin)) * i / N)
+        : xMin + (xMax - xMin) * i / N;
+      const yRaw = slope * xf + intercept;
+      const ci   = 1.96 * sRes * Math.sqrt(1 / n + Math.pow(xf - xMean, 2) / Sxx);
+      lineData.push({  x: +xf.toFixed(4), y: +(logY ? symlog(yRaw)      : yRaw).toFixed(4),      orig: +yRaw.toFixed(2) });
+      upperData.push({ x: +xf.toFixed(4), y: +(logY ? symlog(yRaw + ci) : yRaw + ci).toFixed(4) });
+      lowerData.push({ x: +xf.toFixed(4), y: +(logY ? symlog(yRaw - ci) : yRaw - ci).toFixed(4) });
     }
-    return [
-      base({ label: 'Tendance',  data: lineData,  borderColor: '#ef4444', borderWidth: 2, borderDash: [6, 3], pointRadius: 0, hitRadius: 8, order: 2 }),
-      base({ label: '_ci_upper', data: upperData, borderColor: 'transparent', backgroundColor: 'rgba(239,68,68,0.12)', fill: '+1', order: 0 }),
-      base({ label: '_ci_lower', data: lowerData, borderColor: 'transparent', backgroundColor: 'transparent', order: 0 }),
-    ];
+    return { lineData, upperData, lowerData };
   }
 
-  const trendDs  = buildTrendDatasets();
-  const datasets = [...SCATTER_GROUPS.map(g => buildDataset(g)), trendDs[0], trendDs[1], trendDs[2]];
+  function applyTrend(logX, logY) {
+    const { lineData, upperData, lowerData } = computeTrendData(logX, logY);
+    scatterChart.data.datasets[TREND_IDX].data    = lineData;
+    scatterChart.data.datasets[CI_UPPER_IDX].data = upperData;
+    scatterChart.data.datasets[CI_LOWER_IDX].data = lowerData;
+  }
+
+  // Visibilité via le méta interne Chart.js — évite les désyncros avec dataset.hidden
+  function setTrendVisible(show) {
+    [TREND_IDX, CI_UPPER_IDX, CI_LOWER_IDX].forEach(idx => {
+      scatterChart.getDatasetMeta(idx).hidden = !show;
+    });
+  }
+
+  const { lineData: ld0, upperData: ud0, lowerData: lod0 } = computeTrendData(false, false);
+  const datasets = [
+    buildDataset(SCATTER_GROUPS[0]),
+    { type: 'line', label: 'Tendance', hidden: true, tension: 0,
+      pointRadius: 0, hitRadius: 8, fill: false, order: 2,
+      data: ld0, borderColor: '#ef4444', borderWidth: 2, borderDash: [6, 3] },
+    { type: 'line', label: '_ci_upper', hidden: true, tension: 0,
+      pointRadius: 0, hitRadius: 0, fill: '+1', order: 0,
+      data: ud0, borderColor: 'transparent', backgroundColor: 'rgba(239,68,68,0.12)' },
+    { type: 'line', label: '_ci_lower', hidden: true, tension: 0,
+      pointRadius: 0, hitRadius: 0, fill: false, order: 0,
+      data: lod0, borderColor: 'transparent', backgroundColor: 'transparent' },
+  ];
 
   scatterChart = new Chart(ctx, {
     type: 'scatter',
@@ -872,19 +892,13 @@ function initScatter() {
                 const yReal = d.orig ?? (scatterLogY ? symlogInv(d.y) : d.y);
                 return `${d.nom} — recul: ${d.x} m/an, variation: ${yReal > 0 ? '+' : ''}${yReal?.toFixed(1) ?? '?'}%`;
               }
-              const y = ctx.raw.y;
-              const yReal = scatterLogY ? symlogInv(y) : y;
-              return `Tendance estimée : ${yReal > 0 ? '+' : ''}${yReal.toFixed(1)} %`;
+              const xR = ctx.raw.x;
+              const yReal = ctx.raw.orig ?? ctx.raw.y;
+              return `Tendance à ${xR.toFixed(2)} m/an : ${yReal > 0 ? '+' : ''}${yReal.toFixed(1)} %`;
             },
           },
         },
-        legend: {
-          position: 'top',
-          labels: {
-            font: { size: 12 }, usePointStyle: true, pointStyleWidth: 10,
-            filter: item => item.datasetIndex < SCATTER_GROUPS.length,
-          },
-        },
+        legend: { display: false },
       },
       scales: {
         x: {
@@ -894,7 +908,6 @@ function initScatter() {
             maxRotation: 0,
             callback: (v) => {
               if (scatterLogX) {
-                // En log, n'afficher que les valeurs 1×10ⁿ, 2×10ⁿ, 5×10ⁿ
                 if (v <= 0) return null;
                 const frac = Math.log10(v) - Math.floor(Math.log10(v));
                 const atNice = [0, Math.log10(2), Math.log10(5)]
@@ -907,7 +920,7 @@ function initScatter() {
           grid: { color: '#f1f5f9' },
         },
         y: {
-          title: { display: true, text: 'Variation prix médian post-2023 (%)', font: { size: 12 } },
+          title: { display: true, text: 'Variation prix médian post-décret (%)', font: { size: 12 } },
           ticks: {
             callback: v => {
               const orig = scatterLogY ? symlogInv(v) : v;
@@ -920,55 +933,25 @@ function initScatter() {
     },
   });
 
-  const TREND_IDX    = SCATTER_GROUPS.length;      // 3
-  const CI_UPPER_IDX = SCATTER_GROUPS.length + 1;  // 4
-  const CI_LOWER_IDX = SCATTER_GROUPS.length + 2;  // 5
-
   document.getElementById('toggle-log-x').addEventListener('change', (e) => {
-    const isLogX = e.target.checked;
-    scatterLogX = isLogX;
-    scatterChart.options.scales.x.type = isLogX ? 'logarithmic' : 'linear';
-    SCATTER_GROUPS.forEach((g, i) => {
-      scatterChart.data.datasets[i].data = buildDataset(g, isLogX, scatterLogY).data;
-    });
-    const showTrend = !scatterChart.data.datasets[TREND_IDX].hidden;
-    const newDs = buildTrendDatasets(isLogX, scatterLogY);
-    [TREND_IDX, CI_UPPER_IDX, CI_LOWER_IDX].forEach((idx, i) => {
-      Object.assign(scatterChart.data.datasets[idx], newDs[i]);
-      scatterChart.data.datasets[idx].hidden = !showTrend;
-    });
+    scatterLogX = e.target.checked;
+    scatterChart.options.scales.x.type = scatterLogX ? 'logarithmic' : 'linear';
+    scatterChart.data.datasets[0].data = buildDataset(SCATTER_GROUPS[0], scatterLogX, scatterLogY).data;
+    applyTrend(scatterLogX, scatterLogY);
     scatterChart.update();
   });
 
   document.getElementById('toggle-log-y').addEventListener('change', (e) => {
     scatterLogY = e.target.checked;
-    const isLogX = document.getElementById('toggle-log-x').checked;
-    SCATTER_GROUPS.forEach((g, i) => {
-      scatterChart.data.datasets[i].data = buildDataset(g, isLogX, scatterLogY).data;
-    });
-    const showTrend = !scatterChart.data.datasets[TREND_IDX].hidden;
-    if (showTrend) {
-      const newDs = buildTrendDatasets(isLogX, scatterLogY);
-      [TREND_IDX, CI_UPPER_IDX, CI_LOWER_IDX].forEach((idx, i) => {
-        Object.assign(scatterChart.data.datasets[idx], newDs[i]);
-      });
-    }
+    scatterChart.data.datasets[0].data = buildDataset(SCATTER_GROUPS[0], scatterLogX, scatterLogY).data;
+    applyTrend(scatterLogX, scatterLogY);
     scatterChart.update();
   });
 
   document.getElementById('toggle-trend').addEventListener('change', (e) => {
-    const isLogX = document.getElementById('toggle-log-x').checked;
-    if (e.target.checked) {
-      const newDs = buildTrendDatasets(isLogX, scatterLogY);
-      [TREND_IDX, CI_UPPER_IDX, CI_LOWER_IDX].forEach((idx, i) => {
-        Object.assign(scatterChart.data.datasets[idx], newDs[i]);
-        scatterChart.data.datasets[idx].hidden = false;
-      });
-    } else {
-      [TREND_IDX, CI_UPPER_IDX, CI_LOWER_IDX].forEach(idx => {
-        scatterChart.data.datasets[idx].hidden = true;
-      });
-    }
+    const show = e.target.checked;
+    if (show) applyTrend(scatterLogX, scatterLogY);
+    setTrendVisible(show);
     scatterChart.update();
   });
 }
@@ -1061,9 +1044,9 @@ function renderSingleComparePanel(panel, props, color) {
   const data   = SEMESTERS.map(s => byS[s] ?? null);
 
   const badgeHtml = props.erosion_class
-    ? `<span class="badge badge-${props.erosion_class}">${props.erosion_class === 'fort' ? 'Exposition forte' : 'Exposition moyenne'}</span>`
-    : '<span class="badge badge-neutral">Non classée</span>';
-  const delta = props.price_delta_pct;
+    ? `<span class="badge badge-decret">Commune sous décret</span>`
+    : '<span class="badge badge-neutral">Sans décret</span>';
+  const delta = props.delta_2y ?? null;
   const deltaStr = (delta != null && delta !== 0)
     ? `<span style="color:${delta >= 0 ? '#dc2626' : '#16a34a'}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}%</span>`
     : '—';
@@ -1076,7 +1059,7 @@ function renderSingleComparePanel(panel, props, color) {
     <div class="kpi-row">
       <div class="kpi"><span class="kpi-label">Recul</span><span class="kpi-value">${props.erosion_rate > 0 ? props.erosion_rate + ' m/an' : '—'}</span></div>
       <div class="kpi"><span class="kpi-label">Prix médian</span><span class="kpi-value">${props.price_median_m2 > 0 ? fmt(props.price_median_m2) + ' €/m²' : '—'}</span></div>
-      <div class="kpi"><span class="kpi-label">Post-2023</span><span class="kpi-value">${deltaStr}</span></div>
+      <div class="kpi"><span class="kpi-label">Variation ±2 ans</span><span class="kpi-value">${deltaStr}</span></div>
     </div>
     <div class="compare-canvas-wrap"><canvas id="compare-chart-${code}"></canvas></div>
   `;
@@ -1236,11 +1219,10 @@ function bindCompare() {
     dropdown.innerHTML = matches.map(f => {
       const p = f.properties;
       const cls = p.erosion_class;
-      const badgeTxt = cls === 'fort' ? 'Fort' : cls === 'moyen' ? 'Moyen' : '';
-      const badgeCls = cls ? `item-badge badge-${cls}` : '';
+      const badgeHtml = cls ? `<span class="item-badge badge-decret">Décret</span>` : '';
       return `<li data-code="${p.code_insee}">
         <span>${p.nom}</span>
-        <span class="item-sub">${p.departement ?? ''} ${badgeTxt ? `<span class="${badgeCls}">${badgeTxt}</span>` : ''}</span>
+        <span class="item-sub">${p.departement ?? ''} ${badgeHtml}</span>
       </li>`;
     }).join('');
     dropdown.classList.remove('hidden');
