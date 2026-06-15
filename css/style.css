@@ -640,9 +640,19 @@ html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; ba
 
 .about-disclaimer {
   background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px;
-  padding: 14px 18px; font-size: .78rem; color: #92400e; line-height: 1.6;
+  padding: 16px 20px; font-size: .78rem; color: #92400e; line-height: 1.6;
+  display: flex; flex-direction: column; gap: 10px;
 }
 .about-disclaimer strong { color: #78350f; }
+.disclaimer-list {
+  list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 0;
+}
+.disclaimer-list li {
+  padding-left: 14px; position: relative;
+}
+.disclaimer-list li::before {
+  content: '–'; position: absolute; left: 0; color: #b45309;
+}
 
 /* ── Legend toggle ───────────────────────────────────────────── */
 .legend-toggle-btn {
