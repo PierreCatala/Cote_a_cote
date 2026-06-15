@@ -6,10 +6,10 @@ const DATA_SCATTER      = 'data/scatter.json';
 const DATA_COASTAL_ZONES = 'data/coastal_zones.geojson';
 
 const DECRET_URLS = {
-  '2022-750': 'https://www.legifrance.gouv.fr/jorf/search/#jorf?query=2022-750',
-  '2023-698': 'https://www.legifrance.gouv.fr/jorf/search/#jorf?query=2023-698',
-  '2024-531': 'https://www.legifrance.gouv.fr/jorf/search/#jorf?query=2024-531',
-  '2026-95':  'https://www.legifrance.gouv.fr/jorf/search/#jorf?query=2026-95',
+  '2022-750': 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045726134',
+  '2023-698': 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000047911613',
+  '2024-531': 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000049690164',
+  '2026-95':  'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053493953',
 };
 
 const COLORS = {
