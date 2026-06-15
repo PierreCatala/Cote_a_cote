@@ -5,6 +5,13 @@ const DATA_NODECRET     = 'data/communes_nodecret.geojson';
 const DATA_SCATTER      = 'data/scatter.json';
 const DATA_COASTAL_ZONES = 'data/coastal_zones.geojson';
 
+const DECRET_URLS = {
+  '2022-750': 'https://www.legifrance.gouv.fr/eli/decret/2022/4/29/2022-750/jo',
+  '2023-698': 'https://www.legifrance.gouv.fr/eli/decret/2023/7/31/2023-698/jo',
+  '2024-531': 'https://www.legifrance.gouv.fr/eli/decret/2024/6/10/2024-531/jo',
+  '2026-95':  'https://www.legifrance.gouv.fr/eli/decret/2026/2/13/2026-95/jo',
+};
+
 const COLORS = {
   quintiles: ['#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026'],
   dot:   { decret: '#0ea5e9', none: '#94a3b8' },
@@ -627,10 +634,15 @@ function openSidebar(props) {
   document.getElementById('sb-name').textContent = props.nom ?? '—';
   document.getElementById('sb-dept').textContent = `Dép. ${props.departement ?? '??'}`;
 
-  // Erosion badge
+  // Badge décret cliquable
   const badge = document.getElementById('sb-erosion-badge');
-  if (props.erosion_class) {
-    badge.textContent = 'Commune sous décret';
+  if (props.decret) {
+    const dateStr = props.obligation_date
+      ? new Date(props.obligation_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+      : '';
+    badge.textContent = `Décret n° ${props.decret}${dateStr ? ' · ' + dateStr : ''}`;
+    badge.href = DECRET_URLS[props.decret]
+      ?? `https://www.legifrance.gouv.fr/jorf/search/#jorf?query=${props.decret}`;
     badge.className = 'badge badge-decret';
     badge.classList.remove('hidden');
   } else {

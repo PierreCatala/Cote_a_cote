@@ -120,7 +120,8 @@ html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; ba
 .badge {
   font-size: .7rem; font-weight: 600; padding: 2px 8px; border-radius: 4px;
 }
-.badge-decret { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+.badge-decret { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; text-decoration: none; }
+a.badge-decret:hover { background: #e0f2fe; }
 .badge-neutral { background: #f8fafc; color: #64748b; border: 1px solid var(--border); }
 
 .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
