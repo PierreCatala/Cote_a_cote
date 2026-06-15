@@ -20,6 +20,7 @@ import { fileURLToPath } from 'url';
 const __dir = dirname(fileURLToPath(import.meta.url));
 const SHP = resolve(__dir, 'erosion_shp/N_evolution_trait_cote_fr_epsg2154_S.shp');
 const GEOJSON = resolve(__dir, '../data/communes_littorales.geojson');
+const NODECRET = resolve(__dir, '../data/communes_nodecret.geojson');
 const COASTAL_ARCS = resolve(__dir, '../data/coastal_arcs.geojson');
 const ALL_COMMUNES_CACHE = resolve(__dir, 'all_communes_cache.json');
 
@@ -48,6 +49,8 @@ const SEA_BEARINGS = {
   '83065': 150,  // Gassin — Golfe de Saint-Tropez au SE
   '83068': 180,  // Grimaud — Golfe de Saint-Tropez au S
   '34301':  90,  // Sète — Méditerranée à l'E (et non Thau au SO)
+  // Communes sans décret avec frontière étrangère non détectable par le cache
+  '59260':   0,  // Ghyvelde — Mer du Nord au N (frontière belge à l'E ignorée)
 };
 
 const TARGET_CODES = new Set(Object.keys(SEA_BEARINGS));
@@ -227,12 +230,20 @@ async function main() {
   console.log(`  ${allSegs.length} polygones d'érosion chargés\n`);
 
   const gjson = JSON.parse(await readFile(GEOJSON, 'utf8'));
+  const ncGjson = JSON.parse(await readFile(NODECRET, 'utf8'));
   const arcsGjson = JSON.parse(await readFile(COASTAL_ARCS, 'utf8'));
   const arcsMap = new Map(arcsGjson.features.map(f => [f.properties.code_insee, f]));
 
+  // Toutes les features (littorales + sans décret), sans doublons
+  const allFeatures = [...gjson.features];
+  const literalCodes = new Set(gjson.features.map(f => f.properties.code_insee));
+  for (const f of ncGjson.features) {
+    if (!literalCodes.has(f.properties.code_insee)) allFeatures.push(f);
+  }
+
   let count = 0;
 
-  for (const feat of gjson.features) {
+  for (const feat of allFeatures) {
     const code = feat.properties.code_insee;
     if (!TARGET_CODES.has(code)) continue;
 
@@ -282,9 +293,13 @@ async function main() {
       `  (${arcCount} arc(s), ${arcCoords.length} pts, origin=[${origin[0].toFixed(3)}, ${origin[1].toFixed(3)}])`
     );
 
-    feat.properties.arrow_lng = +origin[0].toFixed(5);
-    feat.properties.arrow_lat = +origin[1].toFixed(5);
-    feat.properties.arrow_bearing = bearing;
+    // Ne mettre à jour les propriétés de flèche que pour les communes littorales
+    // (les communes sans décret n'ont pas de flèche dans communes_littorales.geojson)
+    if (literalCodes.has(code)) {
+      feat.properties.arrow_lng = +origin[0].toFixed(5);
+      feat.properties.arrow_lat = +origin[1].toFixed(5);
+      feat.properties.arrow_bearing = bearing;
+    }
 
     if (arcsMap.has(code)) {
       arcsMap.get(code).geometry.coordinates = arcCoords;
@@ -304,6 +319,7 @@ async function main() {
   }
 
   await writeFile(GEOJSON, JSON.stringify(gjson, null, 2));
+  await writeFile(NODECRET, JSON.stringify(ncGjson, null, 2));
   arcsGjson.features = [...arcsMap.values()];
   await writeFile(COASTAL_ARCS, JSON.stringify(arcsGjson, null, 2));
   console.log(`\n✅ ${count} communes corrigées — rechargez le site.\n`);
