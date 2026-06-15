@@ -5,9 +5,6 @@ pipeline/node_modules/
 pipeline/erosion.zip
 pipeline/erosion_shp/
 
-# Fichier non-décret généré en cours de pipeline (lourd, peut être régénéré)
-data/communes_nodecret.geojson
-
 # Divers
 .DS_Store
 Thumbs.db
