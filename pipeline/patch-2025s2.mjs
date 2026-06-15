@@ -58,6 +58,13 @@ const gjson = JSON.parse(await readFile(GEOJSON, 'utf8'));
 const coastalCodes = new Set(gjson.features.map(f => f.properties.code_insee));
 console.log(`  ${coastalCodes.size} communes chargées depuis le GeoJSON`);
 
+// Mapping arrondissements PLM → code commune principal (DVF indexe par arrondissement)
+const PLM_ARRS = new Map([
+  ...Array.from({ length: 16 }, (_, i) => [`${13201 + i}`, '13055']), // Marseille
+  ...Array.from({ length:  9 }, (_, i) => [`${69381 + i}`, '69123']), // Lyon
+  ...Array.from({ length: 20 }, (_, i) => [`${75101 + i}`, '75056']), // Paris
+]);
+
 // ── 2. Télécharger DVF 2025 et extraire S2 uniquement ─────────
 console.log('\n── Téléchargement DVF 2025 (S2 uniquement) ──');
 const s2Data = new Map(); // code_insee → number[]
@@ -74,7 +81,7 @@ for (const dept of COASTAL_DEPTS) {
     const csvStream = parse({ columns: true, skip_empty_lines: true, relax_column_count: true, encoding: 'utf8' });
 
     csvStream.on('data', (row) => {
-      const code = row['code_commune'];
+      const code = PLM_ARRS.get(row['code_commune']) ?? row['code_commune'];
       if (!coastalCodes.has(code)) return;
 
       const type = row['type_local'] ?? '';
