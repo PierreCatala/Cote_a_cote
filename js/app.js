@@ -600,12 +600,20 @@ function openSidebar(props) {
   }
 
   // KPIs
-  const rate   = props.erosion_rate;
-  const rateEl = document.getElementById('sb-rate');
-  const rateNd = document.getElementById('sb-rate-nd');
+  const rate    = props.erosion_rate;
+  const rateEl  = document.getElementById('sb-rate');
+  const rateNd  = document.getElementById('sb-rate-nd');
+  const rateAvg = document.getElementById('sb-rate-avg');
   if (rate > 0)                { rateEl.textContent = `${rate} m/an`; rateNd.hidden = true; }
   else if (props.erosion_class) { rateEl.textContent = 'N/D';          rateNd.hidden = false; }
   else                          { rateEl.textContent = '—';            rateNd.hidden = true; }
+  const segs = props.taux_segments ?? 1;
+  if (rate > 0 && segs > 1) {
+    rateAvg.dataset.tooltip = `Moyenne calculée sur ${segs} tronçons mesurés par le Cerema sur ce littoral.`;
+    rateAvg.hidden = false;
+  } else {
+    rateAvg.hidden = true;
+  }
 
   const price = props.price_median_m2;
   document.getElementById('sb-price').textContent = price > 0 ? `${fmt(price)} €/m²` : '—';
@@ -803,6 +811,7 @@ function initScatter() {
         y: animated ? 0 : (logY ? symlog(d.price_delta_pct) : d.price_delta_pct),
         nom: d.nom,
         orig: d.price_delta_pct,
+        segs: d.taux_segments ?? 1,
       })),
     backgroundColor: group.color + 'cc',
     borderColor: group.color,
@@ -905,7 +914,8 @@ function initScatter() {
               if (ctx.datasetIndex < SCATTER_GROUPS.length) {
                 const d = ctx.raw;
                 const yReal = d.orig ?? (scatterLogY ? symlogInv(d.y) : d.y);
-                return `${d.nom} — recul: ${d.x} m/an, variation: ${yReal > 0 ? '+' : ''}${yReal?.toFixed(1) ?? '?'}%`;
+                const avgNote = d.segs > 1 ? ` (moy. ${d.segs} tronçons)` : '';
+                return `${d.nom} — recul: ${d.x} m/an${avgNote}, variation: ${yReal > 0 ? '+' : ''}${yReal?.toFixed(1) ?? '?'}%`;
               }
               const xR = ctx.raw.x;
               const yReal = ctx.raw.orig ?? ctx.raw.y;
