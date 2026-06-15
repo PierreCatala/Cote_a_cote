@@ -21,19 +21,19 @@
     <nav class="view-toggle" role="tablist" aria-label="Vue">
       <button id="btn-map"     class="tab-btn active" role="tab" aria-selected="true">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-        Carte
+        <span class="tab-label">Carte</span>
       </button>
       <button id="btn-scatter" class="tab-btn" role="tab" aria-selected="false">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="12" r="1.5"/><circle cx="12" cy="7" r="1.5"/><circle cx="17" cy="16" r="1.5"/><circle cx="5" cy="18" r="1.5"/><circle cx="15" cy="4" r="1.5"/></svg>
-        Nuage de points
+        <span class="tab-label">Nuage</span>
       </button>
       <button id="btn-compare" class="tab-btn" role="tab" aria-selected="false">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/></svg>
-        Comparer
+        <span class="tab-label">Comparer</span>
       </button>
       <button id="btn-about" class="tab-btn" role="tab" aria-selected="false">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Sources
+        <span class="tab-label">Sources</span>
       </button>
     </nav>
 
@@ -93,6 +93,11 @@
       </aside>
 
       <div id="map-legend">
+        <button id="legend-toggle" class="legend-toggle-btn" aria-expanded="true" aria-label="Replier la légende">
+          <span>Légende</span>
+          <svg class="legend-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="legend-body">
 
         <!-- 1. DÉCRET D'OBLIGATION -->
         <div class="legend-block">
@@ -194,6 +199,7 @@
           </div>
         </div>
 
+        </div><!-- #legend-body -->
       </div>
 
       <div id="map-loading" class="loading-overlay">

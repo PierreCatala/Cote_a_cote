@@ -766,6 +766,21 @@ document.getElementById('sidebar-close').onclick = () => {
   document.getElementById('sidebar').classList.add('hidden');
 };
 
+document.getElementById('legend-toggle').addEventListener('click', () => {
+  const legend = document.getElementById('map-legend');
+  const btn    = document.getElementById('legend-toggle');
+  const collapsed = legend.classList.toggle('legend-collapsed');
+  btn.setAttribute('aria-expanded', String(!collapsed));
+});
+
+// Collapse legend by default on small screens
+if (window.innerWidth <= 640) {
+  const legend = document.getElementById('map-legend');
+  const btn    = document.getElementById('legend-toggle');
+  legend.classList.add('legend-collapsed');
+  btn.setAttribute('aria-expanded', 'false');
+}
+
 // ── Scatter ───────────────────────────────────────────────────
 function initScatter() {
   const ctx = document.getElementById('scatter-chart').getContext('2d');
