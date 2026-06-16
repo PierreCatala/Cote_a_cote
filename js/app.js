@@ -656,22 +656,22 @@ function openSidebar(props) {
   const rateAvg = document.getElementById('sb-rate-avg');
   if (rate > 0) {
     rateEl.textContent = `${rate} m/an`;
-    rateNd.hidden = true;
+    rateNd.classList.add('hidden');
   } else if (props.obligation_date) {
     rateEl.textContent = 'N/D';
     rateNd.dataset.tooltip = "La commune est classée en zone d'exposition à l'érosion par le décret, mais les mesures terrain du Cerema (GéoLittoral 2018) ne couvrent pas ce secteur ou ne fournissent pas de taux précis en m/an pour ce linéaire côtier.";
-    rateNd.hidden = false;
+    rateNd.classList.remove('hidden');
   } else {
     rateEl.textContent = '—';
     rateNd.dataset.tooltip = "Aucune mesure de recul du trait de côte disponible pour cette commune dans les données Cerema (GéoLittoral 2018).";
-    rateNd.hidden = false;
+    rateNd.classList.remove('hidden');
   }
   const segs = props.taux_segments ?? 1;
   if (rate > 0 && segs > 1) {
     rateAvg.dataset.tooltip = `Moyenne calculée sur ${segs} tronçons mesurés par le Cerema sur ce littoral.`;
-    rateAvg.hidden = false;
+    rateAvg.classList.remove('hidden');
   } else {
-    rateAvg.hidden = true;
+    rateAvg.classList.add('hidden');
   }
 
   const price = props.price_median_m2;
