@@ -86,6 +86,7 @@ html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; ba
 .search-dropdown .item-sub { font-size: .72rem; color: #64748b; }
 .search-dropdown .item-badge { font-size: .68rem; padding: 1px 6px; border-radius: 4px; }
 .hidden { display: none !important; }
+[hidden] { display: none !important; }
 
 /* ── Main layout ─────────────────────────────────────────────── */
 #app-main { position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; }
